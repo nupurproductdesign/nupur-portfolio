@@ -1,0 +1,149 @@
+/* GALLERY (/gallery): the portfolio as one CSS 3D room drawn like a Figma canvas.
+   Colours only via tokens (app/tokens.css, "Gallery" block). Room sizes must match ROOM in components/gallery/Gallery.tsx:
+   W (front wall) 2400 · D (side walls) 2400 · H (height) 1000. */
+
+.g-root{position:fixed;inset:0;overflow:hidden;background:var(--gal-canvas);color:var(--text);user-select:none;-webkit-user-select:none}
+.g-root button{user-select:none}
+
+/* ---------- the room ---------- */
+.g-stage{position:absolute;inset:0;perspective-origin:50% 50%;overflow:hidden}
+/* the world sits at the centre of the screen; Gallery.tsx moves/turns it as the "camera" */
+.g-world{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
+.g-world.is-moving{transition:transform 1.25s cubic-bezier(.65,0,.25,1)}
+
+.g-wall,.g-floor,.g-ceiling{position:absolute;backface-visibility:hidden}
+.g-wall{top:-500px;left:-1200px;width:2400px;height:1000px;background:linear-gradient(180deg,color-mix(in srgb,var(--gal-wall) 92%,black) 0%,var(--gal-wall) 30%,var(--gal-wall) 100%)}
+.g-wall-about{transform:translateZ(-1200px);background:linear-gradient(180deg,color-mix(in srgb,var(--gal-wall-front) 92%,black) 0%,var(--gal-wall-front) 30%)}
+.g-wall-work{transform:translateX(-1200px) rotateY(90deg)}  /* faces into the room from the left */
+.g-wall-fun{transform:translateX(1200px) rotateY(-90deg)}   /* faces into the room from the right */
+/* floor: boards running away from you; ceiling: beams across, like the reference gallery */
+.g-floor{left:-1200px;top:-1200px;width:2400px;height:2400px;transform:translateY(500px) rotateX(90deg);
+  background:repeating-linear-gradient(90deg,var(--gal-floor) 0 118px,var(--gal-floor-line) 118px 120px)}
+.g-ceiling{left:-1200px;top:-1200px;width:2400px;height:2400px;transform:translateY(-500px) rotateX(-90deg);
+  background:repeating-linear-gradient(90deg,var(--gal-ceiling) 0 150px,var(--gal-beam) 150px 168px)}
+
+/* a wall reads as a Figma section: name tag top-left; from elsewhere in the room it's one big click target */
+.g-section{position:absolute;top:32px;left:44px;font-size:15px;color:var(--text-muted)}
+.g-wall:not(.is-active){cursor:pointer}
+.g-wall:not(.is-active):hover{outline:4px solid color-mix(in srgb,var(--gal-select) 55%,transparent);outline-offset:-4px}
+.g-row,.g-row-inner{display:flex;align-items:center;justify-content:center;gap:56px}
+.g-row{position:absolute;inset:0;padding:40px 110px 0}
+.g-row-inner{display:contents}
+
+/* ---------- Figma frame ---------- */
+.g-frame{position:relative;flex:none;cursor:pointer;outline:1.5px solid transparent;outline-offset:0;transition:outline-color .2s}
+.g-frame:hover{outline-color:color-mix(in srgb,var(--gal-select) 70%,transparent)}
+.g-frame.is-sel,.g-frame:focus-visible{outline:1.5px solid var(--gal-select);cursor:default}
+.g-name{position:absolute;bottom:100%;left:0;max-width:100%;margin-bottom:10px;font-size:13px;line-height:1.2;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-frame.is-sel .g-name{color:var(--gal-select)}
+.g-hdl{display:none;position:absolute;width:9px;height:9px;background:var(--bg);border:1.5px solid var(--gal-select)}
+.g-hdl.tl{top:-5px;left:-5px}.g-hdl.tr{top:-5px;right:-5px}.g-hdl.bl{bottom:-5px;left:-5px}.g-hdl.br{bottom:-5px;right:-5px}
+.g-size{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:12px;white-space:nowrap;
+  font-size:11px;font-weight:500;line-height:1;padding:4px 7px;border-radius:3px;background:var(--gal-select);color:var(--on-accent)}
+.g-frame.is-sel .g-hdl,.g-frame.is-sel .g-size{display:block}
+
+/* frame contents: cards on the About and Fun walls */
+.g-card{width:360px;padding:36px;background:var(--bg);border-radius:6px;box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+.g-card .eyebrow{margin-bottom:16px}
+.g-card h2{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:1.15;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.g-card h2 em{color:var(--emph);font-style:normal}
+.g-card p{color:var(--text-muted);font-size:16.5px;line-height:1.55;margin:18px 0 0}
+.g-w-statement{width:660px}
+.g-w-exp{width:420px}
+.g-w-links{width:300px}
+.g-w-fun{width:500px}
+.g-list{margin:0;display:grid}
+.g-list > div{padding:14px 0;border-top:1px solid var(--line)}
+.g-list dt{font-size:11px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.g-list dd{margin:4px 0 0;font-size:16px}
+.g-list dd span{display:block;color:var(--text-muted);font-size:14px}
+.g-links{list-style:none;margin:0;padding:0;display:grid;gap:14px;font-size:16px}
+.g-links a{border-bottom:1px solid var(--link-underline);transition:color .2s}
+.g-links a:hover{color:var(--accent)}
+.g-links .muted{color:var(--text-muted)}
+/* Work: each case tile sits on its own dark artboard */
+.g-case{width:500px;padding:20px 20px 12px;background:var(--bg);border-radius:6px;box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+.g-paper{width:330px;height:260px;display:grid;place-items:center}
+.g-frame .books{gap:4px;padding:16px 18px 12px}
+.g-frame .spine{width:40px;font-size:11px}
+
+/* ---------- intro: one selected frame on an empty canvas ---------- */
+.g-intro{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;
+  background:var(--gal-canvas);background-image:radial-gradient(var(--gal-canvas-dot) 1px,transparent 1px);background-size:24px 24px;
+  transition:opacity .7s var(--ease)}
+.g-intro.is-leaving{opacity:0;pointer-events:none}
+.g-intro-frame{cursor:default;padding:clamp(20px,3vw,40px) clamp(20px,4vw,56px);transition:transform .7s var(--ease)}
+.g-intro.is-leaving .g-intro-frame{transform:scale(.9)}
+.g-intro .g-head{font-family:var(--font-display);font-weight:500;font-size:clamp(34px,5.6vw,76px);line-height:1.15;letter-spacing:-.025em;margin:0;max-width:12.5em;text-wrap:balance}
+.g-caret{display:inline-block;width:.06em;height:.95em;margin-left:.04em;vertical-align:-.12em;background:var(--accent);animation:g-blink 1s steps(1) infinite}
+@keyframes g-blink{50%{opacity:0}}
+.g-skip{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-muted)}
+
+/* ---------- chrome: breadcrumb, bottom bar ---------- */
+.g-crumb{position:fixed;top:20px;left:clamp(16px,2.6vw,28px);z-index:40;display:flex;gap:8px;align-items:center;font-size:11px;color:var(--text-muted)}
+.g-crumb span:last-child{color:var(--text)}
+.g-crumb button{color:var(--text-muted);transition:color .2s}
+.g-crumb button:hover{color:var(--text)}
+
+.g-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:2px;padding:5px;
+  background:color-mix(in srgb,var(--surface-2) 92%,transparent);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:999px;box-shadow:0 20px 40px -20px rgba(0,0,0,.8)}
+/* tabs follow the nav rule: no pill fills; active = butter text + underline */
+.g-tab{--tx:14px;position:relative;padding:8px var(--tx);font-size:14px;font-weight:500;color:var(--text);opacity:.82;transition:opacity .2s}
+.g-tab:hover{opacity:1}
+.g-tab::after{content:"";position:absolute;left:var(--tx);right:var(--tx);bottom:5px;height:1.5px;background:var(--active);transform:scaleX(0);transform-origin:left}
+.g-tab[aria-current="true"]{opacity:1;color:var(--active)}
+.g-tab[aria-current="true"]::after{transform:scaleX(1);transition:transform .3s var(--ease)}
+.g-star{display:grid;place-items:center;width:34px;height:34px;margin-left:4px;border-radius:50%;background:var(--btn-bg);color:var(--btn-text);transition:background .2s}
+.g-star:hover{background:var(--btn-hover)}
+.g-star:active{background:var(--btn-active)}
+/* frame counter: its own small pill above the bar, so the tabs never shift when it appears */
+.g-pager{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:2px;padding:3px;
+  background:color-mix(in srgb,var(--surface-2) 92%,transparent);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:999px}
+.g-pager .label{min-width:44px;text-align:center;font-size:11px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.g-pager button{width:30px;height:30px;border-radius:50%;font-size:18px;line-height:1;color:var(--text);transition:background .2s,opacity .2s}
+.g-pager button:hover{background:var(--tint)}
+.g-pager button:disabled{opacity:.3;cursor:default;background:none}
+
+/* ---------- "How this works" card in an envelope ---------- */
+.g-note-wrap{position:fixed;inset:0;z-index:45;display:grid;place-items:center;pointer-events:none;padding:16px 16px 90px}
+.g-envelope{position:relative;width:min(380px,100%);pointer-events:auto;animation:g-rise .6s var(--ease) both}
+@keyframes g-rise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+.g-note{position:relative;z-index:1;margin:0 18px;padding:26px 26px 64px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;transform:rotate(-2deg);box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+.g-note h2{font-family:var(--font-display);font-weight:500;font-size:24px;line-height:1.15;letter-spacing:-.02em;margin:0 0 14px}
+.g-note p{margin:0 0 10px;font-size:15px;line-height:1.45;color:var(--text-muted)}
+.g-note b{color:var(--text);font-weight:500}
+.g-sign{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:18px;color:var(--accent)}
+.g-sign > span{display:grid;font-size:14px;color:var(--text)}
+.g-sign > span span{font-size:13px;color:var(--text-muted)}
+/* the envelope pocket: a V cut over the bottom of the card */
+.g-pocket{position:relative;z-index:2;height:110px;margin-top:-80px;background:var(--surface);border:1px solid var(--line);border-radius:4px 4px 16px 16px;
+  clip-path:polygon(0 0,50% 42%,100% 0,100% 100%,0 100%)}
+.g-gotit{position:absolute;z-index:3;left:50%;bottom:24px;transform:translateX(-50%)}
+
+/* ---------- multiplayer cursors ---------- */
+.g-cursors{position:fixed;inset:0;z-index:70;pointer-events:none}
+.g-cur{position:absolute;top:0;left:0;display:flex;align-items:flex-start;gap:2px}
+.g-cur span{font-size:12px;font-weight:500;line-height:1;padding:5px 8px;border-radius:4px;white-space:nowrap}
+.g-cur-you{opacity:0;transition:opacity .2s}
+.g-cur-you span{background:var(--gal-cursor-you);color:var(--gal-cursor-you-text)}
+.g-cur-nupur{color:var(--gal-cursor-nupur);animation:g-wander 26s ease-in-out infinite alternate}
+.g-cur-nupur span{margin-top:12px;background:var(--gal-cursor-nupur);color:var(--gal-cursor-nupur-text)}
+@keyframes g-wander{
+  0%{transform:translate(62vw,64vh)}
+  20%{transform:translate(70vw,38vh)}
+  40%{transform:translate(28vw,30vh)}
+  60%{transform:translate(20vw,58vh)}
+  80%{transform:translate(48vw,70vh)}
+  100%{transform:translate(78vw,52vh)}
+}
+
+/* ---------- small screens ---------- */
+@media (max-width:520px){
+  .g-tab{--tx:10px;font-size:13px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .g-world.is-moving{transition:none}
+  .g-cur-nupur{animation:none;transform:translate(70vw,30vh)}
+  .g-caret{animation:none}
+}
