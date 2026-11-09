@@ -180,7 +180,7 @@ export default function Gallery() {
       </div>
 
       {/* Figma-style chrome */}
-      <header className="g-crumb label">
+      <header className="g-crumb">
         <button type="button" onClick={() => go("overview")}>Nupur Gidhi</button>
         <span aria-hidden="true">/</span>
         <span>{LABEL[view]}</span>
@@ -200,15 +200,13 @@ export default function Gallery() {
             <path fill="currentColor" d="M12 2.5l2.6 6.4 6.9.5-5.3 4.4 1.7 6.7L12 16.8l-5.9 3.7 1.7-6.7-5.3-4.4 6.9-.5z" />
           </svg>
         </button>
+        <span className="g-pager">
+          <button type="button" aria-label="Previous frame" onClick={() => step(-1)} disabled={!count || focus === 0}>‹</button>
+          <span className="g-count" aria-live="polite">{count ? `${focus === null ? "–" : focus + 1}/${count}` : "–/–"}</span>
+          <button type="button" aria-label="Next frame" onClick={() => step(1)} disabled={!count || focus === count - 1}>›</button>
+        </span>
       </nav>
 
-      {view !== "overview" && count > 0 && (
-          <span className="g-pager">
-            <button type="button" aria-label="Previous frame" onClick={() => step(-1)} disabled={focus === 0}>‹</button>
-            <span className="label" aria-live="polite">{focus === null ? "–" : focus + 1} / {count}</span>
-            <button type="button" aria-label="Next frame" onClick={() => step(1)} disabled={focus === count - 1}>›</button>
-          </span>
-        )}
 
       <Cursors />
 
@@ -240,7 +238,7 @@ function HowItWorks({ onClose }: { onClose: () => void }) {
           </div>
         </div>
         <div className="g-pocket" />
-        <button ref={btn} type="button" className="btn g-gotit" onClick={onClose}>Got it</button>
+        <button ref={btn} type="button" className="g-gotit" onClick={onClose}>Got it</button>
       </div>
     </div>
   );

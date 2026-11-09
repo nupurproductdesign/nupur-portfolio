@@ -188,17 +188,23 @@ Principle: visuals carry the weight, copy only captions them. No long paragraphs
 ## Gallery page (`/gallery`, started 2026-11-10, work in progress)
 A second take on the portfolio, inspired by a Framer portfolio Nupur shared (Figma-canvas UI, 3D walk-through) crossed with
 an art gallery room. Lives beside `/` so the two can be compared; swap it in later only if Nupur says so.
-- **Flow:** intro canvas with one selected Figma frame; the headline types itself, "Vibe Codes" lands as the butter
-  post-it (the only one), then the camera pulls back into the room and a "How this works" card in an envelope appears.
+- **Look (2026-11-10, Nupur: "forget the old theme, same as the video, like I'm in a Figma file"):** the gallery
+  does NOT follow VISUAL-IDENTITY.md. Light Figma canvas: walls, floor and ceiling are all the same `#F5F5F5` canvas with a 40px
+  `--fig-grid` dot grid, like Figma's canvas (the room is felt only through perspective, no floorboards/beams), white frames, `#1E1E1E`
+  text, Geist only (no Funnel Display, no butter post-it). Figma blue `#0D99FF` for outlines/handles only (fails AA
+  behind text); `#0A6DC2` for anything with text (active tab fill, size tag, selected frame name, 5.3:1 with white).
+  Cursors: orange "You" `#C2410C`, purple "Nupur" `#8A3FFC`. Tokens: `--fig-*` block scoped to `.g-root` at the end
+  of `app/tokens.css`. Case tiles are light too (white artboard, `#F5F5F5` tile, dark-ink pills), via a
+  `.g-root .g-case` token block in `app/tokens.css`; tiles on `/` stay dark. `/` keeps the dark butter theme.
+- **Flow:** intro canvas with one selected Figma text frame; the headline types itself in black, then the camera pulls
+  back into the room and a "How this works" card in an envelope appears (black "Got it").
 - **Room:** CSS 3D, one "camera" (`components/gallery/Gallery.tsx`). Left wall = **Work** (case tiles), front wall =
   **About** (statement, quick facts, experience, links), right wall = **Fun** (paintings, nightstand, crane). Sizes in
   `ROOM` must match `app/gallery/gallery.css`.
-- **Bottom bar:** Work · About · Fun + butter ★ **Ask Nupur (does nothing yet; Nupur will decide)**. Tabs follow the nav
-  rule (butter text + underline, no fill). Frame counter ‹ n / N › is its own pill above the bar so tabs never shift.
-- **Moves:** tab or click a wall → turn to face it. Click a frame → step up to it (Figma selection: butter outline,
-  handles, size tag); second click reaches links inside. Arrows / scroll walk frame to frame; Esc steps back.
-- **Figma chrome in butter**, not Figma blue (one accent). Cursors: "You" (butter tag on the real pointer) and "Nupur"
-  (light tag, drifting). Gallery colours are the `--gal-*` tokens in the butter block of `app/tokens.css`.
+- **Bottom bar** (white, like the video): Work · About · Fun (active = solid blue fill, white text) + black ★
+  **Ask Nupur (does nothing yet; Nupur will decide)** + ‹ n/N › counter, always in the bar so tabs never shift.
+- **Moves:** tab or click a wall → turn to face it. Click a frame → step up to it (Figma selection: blue outline,
+  white handles, "Hug × Hug" tag); second click reaches links inside. Arrows / scroll walk frame to frame; Esc steps back.
 - Headline copy is `GALLERY_HEADLINE` in `lib/content.ts` (TODO: Nupur picks the final line). About/Fun copy moved to
   `ABOUT` / `FUN` there, shared by `/` and `/gallery`.
 - **Not done yet:** drag to look around; phone layout is a first pass (room is small on tall screens); real photos.

@@ -3,25 +3,25 @@
 import { useEffect, useState } from "react";
 import { GALLERY_HEADLINE } from "@/lib/content";
 
-// Opening shot: one selected Figma frame on an empty canvas. The headline types itself in,
-// the "Vibe Codes" post-it slaps on, then the canvas fades and the camera pulls back into the room.
+// Opening shot: one selected Figma text frame on an empty canvas. The headline types itself in,
+// then the canvas fades and the camera pulls back into the room.
 // Any click or key skips ahead.
 export default function Intro({ onLeave, onGone }: { onLeave: () => void; onGone: () => void }) {
-  const { lead, note } = GALLERY_HEADLINE;
+  const text = `${GALLERY_HEADLINE.lead} ${GALLERY_HEADLINE.note}`;
   const [n, setN] = useState(0); // characters typed so far
   const [leaving, setLeaving] = useState(false);
-  const typed = n >= lead.length;
+  const typed = n >= text.length;
 
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return setN(lead.length);
-    const t = setInterval(() => setN((k) => (k >= lead.length ? k : k + 1)), 45);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return setN(text.length);
+    const t = setInterval(() => setN((k) => (k >= text.length ? k : k + 1)), 45);
     return () => clearInterval(t);
-  }, [lead]);
+  }, [text]);
 
-  // once the post-it has landed, hold for a beat, then leave
+  // once the line is typed, hold for a beat, then leave
   useEffect(() => {
     if (!typed || leaving) return;
-    const t = setTimeout(() => setLeaving(true), 1900);
+    const t = setTimeout(() => setLeaving(true), 1400);
     return () => clearTimeout(t);
   }, [typed, leaving]);
 
@@ -47,17 +47,16 @@ export default function Intro({ onLeave, onGone }: { onLeave: () => void; onGone
     <div className={`g-intro${leaving ? " is-leaving" : ""}`}>
       <div className="g-frame is-sel g-intro-frame">
         <span className="g-name">Intro</span>
-        <h1 className="g-head" aria-label={`${lead} ${note}`}>
+        <h1 className="g-head" aria-label={text}>
           <span aria-hidden="true">
-            {lead.slice(0, n)}
-            {!typed && <span className="g-caret" />}
-            {typed && <> <span className="hl">{note}</span></>}
+            {text.slice(0, n)}
+            <span className="g-caret" />
           </span>
         </h1>
         <i className="g-hdl tl" /><i className="g-hdl tr" /><i className="g-hdl bl" /><i className="g-hdl br" />
         <span className="g-size">Hug × Hug</span>
       </div>
-      <span className="g-skip label">Click anywhere to enter</span>
+      <span className="g-skip">Click anywhere to enter</span>
     </div>
   );
 }
