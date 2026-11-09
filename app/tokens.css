@@ -1,0 +1,233 @@
+/* Design tokens. The ONLY place colours and fonts are defined.
+   Components use ROLE tokens (--bg, --text, --line, --rail-bg…), never palette names.
+
+   Live theme: CRIMSON DARK (near-black #101010 + crimson), from Nupur's reference, 2026-10-03.
+   (Previous: warm dark #1A1617 + peach #FF6F61.)
+   The oxblood/ivory "Split" identity (VISUAL-IDENTITY.md) is kept under [data-theme="light"];
+   add data-theme="light" to <html> in app/layout.tsx to switch. */
+:root {
+  /* ---------- palette: crimson dark (live; from Nupur's "Rauph" reference, 2026-10-03) ---------- */
+  --char: #101010;         /* page bg (sampled) */
+  --char-tile: #181818;    /* tiles, desk */
+  --char-tile-2: #202020;  /* inner cards, AI bubble, input */
+  --char-line: #212121;    /* subtle borders (sampled grid line) */
+  --char-rule: #262626;    /* divider lines */
+  --char-ink: #F2F0EC;     /* text: 16.7:1 on bg */
+  --char-muted: #9A9A9A;   /* secondary text: 6.8:1 on bg, 5.8:1 on tile-2 */
+  --crimson: #821E2A;      /* brand red (Nupur's exact hex): FILLS only (buttons, user bubble, selection); white on it 9.7:1.
+                              As text it's 2.0:1 on bg, so never use it for text or thin lines. */
+  --accent: #DB6270;       /* lighter crimson (5.4:1): focus ring + decorative bits (spark dot, a book spine, origami) */
+  --accent-soft: rgba(219, 98, 112, .14);
+  --accent-deep: var(--crimson);
+  --ok: #6FCF97;   --ok-soft: rgba(111, 207, 151, .12);
+  --amber: #E9B454; --amber-soft: rgba(233, 180, 84, .13);
+  --blue: #959DFF; --blue-soft: rgba(140, 149, 255, .14); /* #8C95FF nudged to pass AA as pill text */
+  --mock-blue: #4F5DE8;    /* mock "Button" fill; #5C6BF0 nudged so white text passes AA */
+
+  /* ---------- palette: oxblood identity (used by the light variant) ---------- */
+  --oxblood: #440512; --cream: #FAF6EE; --ink: #2B030B; --wine: #6E1426; --blush: #EFE2CF; --paper: #F3E7D6;
+  --sand: #E0CDB5; --cocoa: #7A5148; --cream-muted: #CDB9A8; --rule-ox: #6A2230; --rosewood: #A4515B;
+  --status-live-ox: #9CC59F; --desk-note-ox: #F3DCD4; --desk-paper-ox: #FBF5EC; --desk-tan: #B89A80;
+
+  /* ---------- roles: DARK (live) ---------- */
+  --bg: var(--char);
+  --surface: var(--char-tile);
+  --surface-2: var(--char-tile-2);
+  --line: var(--char-rule);
+  --text: var(--char-ink);
+  --text-muted: var(--char-muted);
+  /* accent TEXT = #CC4433 (Nupur's exact hex, 2026-10-03): 4.03:1 on bg */
+  --accent-text: #CC4433;
+  --emph: var(--accent-text);            /* emphasis words in headings, links */
+  --active: var(--accent-text);          /* active nav tab text + underline */
+  --headline-accent: var(--accent-text); /* "vibe-codes" */
+  --tint: color-mix(in srgb, var(--char-ink) 7%, transparent);
+  --tint-2: color-mix(in srgb, var(--char-ink) 11%, transparent);
+  --btn-bg: var(--crimson);              /* primary buttons: crimson with white text (9.7:1) */
+  --btn-text: #FFFFFF;
+  --btn-hover: #972331;                  /* crimson, one step lighter (white 8.1:1) */
+  --btn-active: #6D1923;
+  --link: var(--emph);
+  --link-underline: var(--accent);
+  --tag-dot: var(--accent);
+  --on-accent: #FFFFFF;
+  --tag-bg: var(--char);
+  --tag-text: var(--char-ink);
+  --pop-bg: var(--char-tile-2);
+  --pop-text: var(--char-ink);
+  --rail-bg: var(--char);
+  --rail-border: var(--char-rule);       /* thin line between rail and content */
+  --bubble-me-bg: var(--crimson);
+  --bubble-me-text: #FFFFFF;
+  --tip-bg: var(--char-tile-2);
+  --tip-text: var(--char-ink);
+  --focus: var(--accent);                /* kept on the lighter #DB6270 (5.4:1) so keyboard focus stays visible */
+  --selection-bg: var(--accent-deep);
+  --selection-text: #FFFFFF;
+  --live: var(--ok);
+  --spark: conic-gradient(from 0deg, var(--accent), var(--crimson), var(--char-ink), var(--accent));
+  --shadow-card: 0 30px 60px -30px rgba(0, 0, 0, .8);
+  --shadow-object: 0 20px 40px -18px rgba(0, 0, 0, .9);
+
+  /* desk objects */
+  --desk-surface: var(--char-tile);
+  --desk-dot: #333333;
+  --desk-note: #F1D873;
+  --desk-note-text: #2C2610;             /* 10.6:1 */
+  --desk-paper: #F4F1EA;
+  --desk-paper-text: #1B1B1B;
+  --desk-canvas: #FBFAF6;
+  --books-bg: var(--char-tile-2);
+  --spine-1: #5C6BF0; --spine-2: #2FA36B; --spine-3: var(--accent); --spine-4: #C98E2B; --spine-5: #555555;
+  --spine-text: rgba(255, 255, 255, .92);
+  /* per-spine label colour: charcoal on green, peach and amber (white failed AA there) */
+  --spine-1-text: var(--spine-text); --spine-2-text: var(--char); --spine-3-text: var(--char);
+  --spine-4-text: var(--char); --spine-5-text: var(--spine-text);
+  --origami: var(--accent);
+  --inks: 92 107 240, 201 142 43, 47 163 107, 255 111 97, 120 90 200; /* painting watercolours (r g b) */
+
+  /* mock screens in the case tiles (placeholders until real screenshots) */
+  --mock-av-1: linear-gradient(135deg, #F3A683, #E77F67);
+  --mock-av-2: linear-gradient(135deg, #9AA5FF, #5C6BF0);
+  --mock-av-3: linear-gradient(135deg, #7BD3A4, #2FA36B);
+  --mock-av-solid: var(--char-ink);
+  --pill-1-bg: var(--ok-soft);    --pill-1: var(--ok);
+  --pill-2-bg: var(--amber-soft); --pill-2: var(--amber);
+  --pill-3-bg: var(--blue-soft);  --pill-3: var(--blue);
+  --pill-4-bg: #333333;           --pill-4: var(--char-muted);
+  --note-row-bg: var(--blue-soft); --note-row-text: var(--blue);
+  --sw-1: #5C6BF0; --sw-2: #2FA36B; --sw-3: #E9B454;
+  --mock-btn-bg: var(--mock-blue); --mock-btn-text: #FFFFFF;
+  --mock-soft-bg: var(--ok-soft);  --mock-soft-text: var(--ok);
+  --phone-frame: #0E0E0E;
+  --glow-1: rgba(140, 149, 255, .18); --glow-2: rgba(233, 180, 84, .14);
+  --glow-3: rgba(111, 207, 151, .14); --glow-4: rgba(130, 30, 42, .35);
+
+  /* fonts (next/font variables are set on <html> in app/layout.tsx) */
+  --font-display: var(--font-funnel), "Funnel Display", var(--font-geist), ui-sans-serif, system-ui, sans-serif; /* replaced Newsreader 2026-10-03 */
+  --font-sans: var(--font-geist), "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --label-tracking: 0.14em;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+
+  /* layout */
+  --rail: minmax(340px, 1fr);
+  --nav: 64px;
+  --g: clamp(16px, 2.6vw, 44px); /* side padding for all three columns + nav + footers (20px trial reverted 2026-10-03) */
+  --pad-top: 24px; /* one top padding for all three columns: rail, content, chat */
+  --foot: 64px; /* shared footer height: rail socials + colophon, so their top lines align */
+
+  color-scheme: dark;
+}
+
+/* ---------- BUTTER DARK (live, 2026-10-03): data-theme="butter" on <html>. Spec: VISUAL-IDENTITY.md §1.
+   Background from the "Featured Work" reference; accent is butter (replaced the lime trial).
+   To go back to crimson, remove data-theme from <html> in app/layout.tsx. ---------- */
+[data-theme="butter"] {
+  --accent: #F3DF9A;        /* butter: 12.0:1 on bg, 8.7:1 on cards */
+  --on-accent: #1E1E1E;     /* text on butter fills: 12.6:1 */
+  --accent-hover: color-mix(in srgb, var(--accent) 92%, black);  /* 8% darker (#E0CD8E), on-accent 10.6:1 */
+  --accent-active: color-mix(in srgb, var(--accent) 84%, black); /* 16% darker, on-accent 8.7:1 */
+  --bg: #222222;
+  --surface: #2E2E2E;       /* tiles, desk */
+  --surface-2: #393939;     /* inner cards, AI bubble, input */
+  --line: #4A4A4A;
+  --text: #F4F4F4;          /* 14.5:1 on bg, 10.5:1 on cards */
+  --text-muted: #A8A8A8;    /* 6.7:1 on bg, 4.9:1 on cards */
+  --emph: var(--accent);    /* plain accent text ("states", "paint") */
+  --active: var(--accent);  /* active nav tab text + underline */
+  --headline-accent: var(--on-accent); /* "vibe-codes" text sits on the highlighter */
+  --accent-text: var(--accent);
+  --link: var(--text);      /* links: normal text with an accent underline */
+  --link-underline: var(--accent);
+  --tint: color-mix(in srgb, #F4F4F4 7%, transparent);
+  --tint-2: color-mix(in srgb, #F4F4F4 11%, transparent);
+  --btn-bg: var(--accent);
+  --btn-text: var(--on-accent);
+  --btn-hover: var(--accent-hover);
+  --btn-active: var(--accent-active);
+  --tag-bg: #222222;
+  --tag-text: #F4F4F4;
+  --tag-dot: var(--accent);
+  --pop-bg: #393939;
+  --pop-text: #F4F4F4;
+  --rail-bg: #222222;
+  --rail-border: #4A4A4A;
+  --bubble-me-bg: var(--accent);
+  --bubble-me-text: var(--on-accent);
+  --tip-bg: #393939;
+  --tip-text: #F4F4F4;
+  --focus: var(--accent);
+  --selection-bg: var(--accent);
+  --selection-text: var(--on-accent);
+  --spark: var(--accent);   /* Ask-Nupur dot: plain accent */
+  --desk-surface: #2E2E2E;
+  --desk-dot: #444444;
+  --books-bg: #393939;
+  --spine-3: var(--accent); --spine-3-text: var(--on-accent);
+  --origami: #8A7631;       /* deeper butter so the crane shows on the light paper (3.95:1) */
+  --glow-4: rgba(243, 223, 154, .14);
+  /* Gallery (/gallery): a dark room drawn like a Figma canvas. Text sits on walls/cards only in approved pairs:
+     --text on --gal-wall 12.6:1, --text-muted on --gal-wall 5.8:1, --text on --surface-2 10.5:1. */
+  --gal-canvas: #1B1B1B;     /* outside the room / intro canvas */
+  --gal-canvas-dot: #333333;
+  --gal-wall: #2E2E2E;       /* side walls */
+  --gal-wall-front: #353535; /* front wall catches a little more light */
+  --gal-floor: #1E1E1E;
+  --gal-floor-line: #262626; /* floorboards */
+  --gal-ceiling: #191919;
+  --gal-beam: #202020;       /* ceiling beams (kept faint: from the side they fan out) */
+  --gal-select: var(--accent);            /* Figma selection outline + handles, in butter (no Figma blue: one accent only) */
+  --gal-cursor-you: var(--accent);        /* visitor's cursor tag: butter fill, on-accent text 12.6:1 */
+  --gal-cursor-you-text: var(--on-accent);
+  --gal-cursor-nupur: #F4F4F4;            /* Nupur's cursor tag: light fill, #222 text 14.5:1 */
+  --gal-cursor-nupur-text: #222222;
+  color-scheme: dark;
+}
+
+/* ---------- roles: LIGHT = oxblood/ivory "Split" (VISUAL-IDENTITY.md), kept for later; not active ---------- */
+[data-theme="light"] {
+  --bg: var(--cream); --surface: var(--blush); --surface-2: var(--paper); --line: var(--sand);
+  --text: var(--oxblood); --text-muted: var(--cocoa); --emph: var(--wine); --active: var(--oxblood);
+  --headline-accent: var(--cream);
+  --tint: color-mix(in srgb, var(--oxblood) 8%, transparent);
+  --tint-2: color-mix(in srgb, var(--oxblood) 12%, transparent);
+  --btn-bg: var(--oxblood); --btn-text: var(--cream); --btn-hover: var(--wine); --btn-active: var(--ink);
+  --tag-bg: var(--cream); --tag-text: var(--oxblood); --pop-bg: var(--cream); --pop-text: var(--oxblood);
+  --rail-bg: var(--oxblood); --rail-border: transparent;
+  --bubble-me-bg: var(--oxblood); --bubble-me-text: var(--cream);
+  --tip-bg: var(--oxblood); --tip-text: var(--cream);
+  --focus: var(--rosewood); --selection-bg: var(--rosewood); --selection-text: var(--cream);
+  --live: var(--status-live-ox);
+  --spark: conic-gradient(from 0deg, var(--oxblood), var(--rosewood), var(--sand), var(--oxblood));
+  --shadow-card: 0 24px 50px -28px rgba(68, 5, 18, .35);
+  --shadow-object: 0 18px 36px -18px rgba(68, 5, 18, .35);
+  --desk-surface: var(--blush); --desk-dot: var(--sand);
+  --desk-note: var(--desk-note-ox); --desk-note-text: var(--oxblood);
+  --desk-paper: var(--desk-paper-ox); --desk-paper-text: var(--oxblood); --desk-canvas: var(--desk-paper-ox);
+  --books-bg: var(--desk-paper-ox);
+  --spine-1: var(--oxblood); --spine-2: var(--wine); --spine-3: var(--rosewood); --spine-4: var(--cocoa); --spine-5: var(--desk-tan);
+  --spine-text: var(--cream);
+  --spine-1-text: var(--cream); --spine-2-text: var(--cream); --spine-3-text: var(--cream);
+  --spine-4-text: var(--cream); --spine-5-text: var(--oxblood);
+  --origami: var(--oxblood);
+  --inks: 68 5 18, 110 20 38, 164 81 91, 122 81 72, 184 154 128;
+  --mock-av-1: var(--oxblood); --mock-av-2: var(--rosewood); --mock-av-3: var(--desk-tan); --mock-av-solid: var(--oxblood);
+  --pill-1-bg: var(--tint-2); --pill-1: var(--oxblood);
+  --pill-2-bg: color-mix(in srgb, var(--cocoa) 14%, transparent); --pill-2: var(--cocoa);
+  --pill-3-bg: color-mix(in srgb, var(--rosewood) 18%, transparent); --pill-3: var(--wine);
+  --pill-4-bg: var(--sand); --pill-4: var(--oxblood);
+  --note-row-bg: var(--tint); --note-row-text: var(--oxblood);
+  --sw-1: var(--oxblood); --sw-2: var(--rosewood); --sw-3: var(--desk-tan);
+  --mock-btn-bg: var(--oxblood); --mock-btn-text: var(--cream);
+  --mock-soft-bg: var(--tint-2); --mock-soft-text: var(--oxblood);
+  --phone-frame: var(--oxblood);
+  --glow-1: color-mix(in srgb, var(--rosewood) 22%, transparent); --glow-2: color-mix(in srgb, var(--desk-tan) 30%, transparent);
+  --glow-3: color-mix(in srgb, var(--wine) 14%, transparent); --glow-4: color-mix(in srgb, var(--oxblood) 14%, transparent);
+  color-scheme: light;
+}
+/* in the light variant the rail is an oxblood panel, so its text roles swap */
+[data-theme="light"] .rail { --text: var(--cream); --text-muted: var(--cream-muted); --line: var(--rule-ox); }
+
+::selection { background: var(--selection-bg); color: var(--selection-text); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
