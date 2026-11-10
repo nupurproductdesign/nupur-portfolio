@@ -29,12 +29,13 @@ export type CaseStudy = {
   status: string; // TODO(nupur): final status for Luna cases 3 and 4
   title: string;
   glow: string; // soft radial tint at the tile bottom (theme token)
-  href: string; // "#work" until the case study page exists
+  href: string; // "#work" until the case study page exists, then "/work/<slug>"
+  slug?: string; // set once the case study has a page at /work/<slug>
   // TODO(nupur): one-line outcome per tile once impact numbers exist
 };
 
 export const CASES: CaseStudy[] = [
-  { kind: "campaigns", org: "LehLah", status: "Shipped 2026", title: "A campaign management system for brand collaborations", glow: "var(--glow-1)", href: "#work" },
+  { kind: "campaigns", org: "LehLah", status: "Shipped 2026", title: "A campaign management system for brand collaborations", glow: "var(--glow-1)", href: "/work/campaign-management", slug: "campaign-management" },
   { kind: "phone", org: "LehLah", status: "Shipped 2026", title: "Bringing influencer marketing into an affiliate-first app", glow: "var(--glow-2)", href: "#work" },
   { kind: "tokens", org: "Luna", status: "Ongoing", title: "Luna Design System, and teaching it to AI", glow: "var(--glow-3)", href: "#work" },
   { kind: "workspaces", org: "Luna", status: "In progress", title: "Agency workspaces: many brands, one login", glow: "var(--glow-4)", href: "#work" },

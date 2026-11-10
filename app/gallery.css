@@ -4,14 +4,16 @@
    and --H (height), set on .g-root. Change them there, not here. */
 
 .g-root{position:fixed;inset:0;overflow:hidden;background:var(--fig-canvas);color:var(--fig-text);font-family:var(--font-sans);user-select:none;-webkit-user-select:none}
-.g-root ::selection{background:var(--fig-blue-ink);color:var(--fig-on-blue)}
-.g-root :focus-visible{outline:2px solid var(--fig-blue-ink);outline-offset:3px}
+.g-root ::selection{background:var(--fig-blue);color:var(--fig-on-blue)}
+.g-root :focus-visible{outline:2px solid var(--fig-blue);outline-offset:3px}
 
 /* ---------- the room ---------- */
 .g-stage{position:absolute;inset:0;perspective-origin:50% 50%;overflow:hidden}
 /* the world sits at the centre of the screen; Gallery.tsx moves/turns it as the "camera" */
 .g-world{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
 .g-world.is-moving{transition:transform 1.25s cubic-bezier(.65,0,.25,1)}
+/* the opening auto-pan to the Work wall: slower and gentler than a tab click */
+.g-world.is-moving.is-slow{transition:transform 3.2s cubic-bezier(.45,0,.2,1)}
 
 /* Every surface is the same Figma dot-grid canvas: the room is only felt through perspective, as the rows of dots
    bend at the corners. 40px spacing divides every room size (keep W, D, H multiples of 40), so the rows line up
@@ -45,19 +47,19 @@
 .g-frame:hover{outline-color:var(--fig-blue)}
 .g-frame.is-sel,.g-root .g-frame:focus-visible{outline:1.5px solid var(--fig-blue);outline-offset:0;cursor:default}
 .g-name{position:absolute;bottom:100%;left:0;max-width:100%;margin-bottom:8px;font-size:13px;line-height:1.2;color:var(--fig-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.g-frame.is-sel .g-name,.g-frame:hover .g-name{color:var(--fig-blue-ink)}
+.g-frame.is-sel .g-name,.g-frame:hover .g-name{color:var(--fig-blue)}
 /* Figma handles: white squares with a blue border */
 .g-hdl{display:none;position:absolute;width:8px;height:8px;background:#fff;border:1.5px solid var(--fig-blue)}
 .g-hdl.tl{top:-4.5px;left:-4.5px}.g-hdl.tr{top:-4.5px;right:-4.5px}.g-hdl.bl{bottom:-4.5px;left:-4.5px}.g-hdl.br{bottom:-4.5px;right:-4.5px}
 .g-size{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:10px;white-space:nowrap;
-  font-size:11px;font-weight:500;line-height:1;padding:4px 6px;border-radius:3px;background:var(--fig-blue-ink);color:var(--fig-on-blue)}
+  font-size:11px;font-weight:500;line-height:1;padding:4px 6px;border-radius:3px;background:var(--fig-blue);color:var(--fig-on-blue)}
 .g-frame.is-sel .g-hdl,.g-frame.is-sel .g-size{display:block}
 
 /* frame contents: white artboards on the About and Fun walls */
 .g-card{width:360px;padding:36px;background:var(--fig-frame);color:var(--fig-text);border-radius:4px;box-shadow:var(--fig-shadow)}
 .g-card .eyebrow{display:block;margin-bottom:16px;font-size:11px;color:var(--fig-muted)}
 .g-card h2{font-family:var(--font-sans);font-weight:500;font-size:34px;line-height:1.15;letter-spacing:-.03em;margin:0;text-wrap:balance}
-.g-card h2 em{color:var(--fig-blue-ink);font-style:normal}
+.g-card h2 em{color:var(--fig-blue);font-style:normal}
 .g-card p{color:var(--fig-muted);font-size:16px;line-height:1.55;margin:18px 0 0}
 .g-w-statement{width:660px}
 .g-w-exp{width:420px}
@@ -70,7 +72,7 @@
 .g-list dd span{display:block;color:var(--fig-muted);font-size:14px}
 .g-links{list-style:none;margin:0;padding:0;display:grid;gap:14px;font-size:16px}
 .g-links a{border-bottom:1px solid currentColor;transition:color .2s}
-.g-links a:hover{color:var(--fig-blue-ink)}
+.g-links a:hover{color:var(--fig-blue)}
 .g-links .muted{color:var(--fig-muted)}
 /* Work: case tiles on white artboards; their light colours come from the .g-case block in tokens.css */
 .g-case{width:500px;padding:20px 20px 12px;background:var(--fig-frame);border-radius:4px;box-shadow:var(--fig-shadow)}
@@ -94,7 +96,7 @@
 /* ---------- chrome: breadcrumb, bottom bar ---------- */
 .g-crumb{position:fixed;top:20px;left:clamp(16px,2.6vw,28px);z-index:40;display:flex;gap:6px;align-items:center;font-size:14px;color:var(--fig-muted)}
 .g-crumb button{font-weight:500;color:var(--fig-text)}
-.g-crumb button:hover{color:var(--fig-blue-ink)}
+.g-crumb button:hover{color:var(--fig-blue)}
 
 .g-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:2px;padding:4px;
   background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:10px;box-shadow:var(--fig-shadow)}
@@ -112,47 +114,22 @@
 .g-pager button:hover{background:var(--fig-tint)}
 .g-pager button:disabled{opacity:.3;cursor:default;background:none}
 
-/* ---------- "How this works" card in an envelope ---------- */
-.g-note-wrap{position:fixed;inset:0;z-index:45;display:grid;place-items:center;pointer-events:none;padding:16px 16px 90px}
-.g-envelope{position:relative;width:min(400px,100%);pointer-events:auto;animation:g-rise .6s var(--ease) both}
-@keyframes g-rise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
-.g-note{position:relative;z-index:1;margin:0 18px;padding:28px 28px 70px;background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:16px;transform:rotate(-2deg);box-shadow:var(--fig-shadow)}
-.g-note h2{font-family:var(--font-sans);font-weight:600;font-size:24px;line-height:1.15;letter-spacing:-.03em;margin:0 0 14px}
-.g-note p{margin:0 0 10px;font-size:16px;line-height:1.45;color:var(--fig-muted)}
-.g-note b{color:var(--fig-text);font-weight:600}
-.g-sign{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:18px;color:var(--fig-blue)}
-.g-sign > span{display:grid;font-size:15px;color:var(--fig-text)}
-.g-sign > span span{font-size:13px;color:var(--fig-muted)}
-/* the envelope pocket: a V cut over the bottom of the card */
-.g-pocket{position:relative;z-index:2;height:120px;margin-top:-88px;background:#F0F0F0;border:1px solid var(--fig-line);border-radius:4px 4px 16px 16px;
-  clip-path:polygon(0 0,50% 42%,100% 0,100% 100%,0 100%);box-shadow:var(--fig-shadow)}
-.g-gotit{position:absolute;z-index:3;left:50%;bottom:26px;transform:translateX(-50%);padding:8px 16px;border-radius:8px;font-size:14px;font-weight:500;
-  background:var(--fig-btn);color:var(--fig-on-btn);transition:background .2s}
-.g-gotit:hover{background:var(--fig-btn-hover)}
-
 /* ---------- multiplayer cursors ---------- */
 .g-cursors{position:fixed;inset:0;z-index:70;pointer-events:none}
 .g-cur{position:absolute;top:0;left:0;display:flex;align-items:flex-start;gap:2px}
 .g-cur span{font-size:12px;font-weight:500;line-height:1;padding:5px 8px;border-radius:4px;white-space:nowrap;color:var(--fig-on-cursor)}
 .g-cur-you{opacity:0;transition:opacity .2s}
 .g-cur-you span{background:var(--fig-cursor-you)}
-/* cursor chat (Figma's "/" chat bubble): the "You" tag grows into a message bubble, square corner at the pointer */
-.g-cur-you.is-chat span{max-width:240px;white-space:normal;font-size:14px;line-height:1.35;padding:8px 12px;border-radius:2px 14px 14px 14px;
-  box-shadow:var(--fig-shadow);animation:g-chat-in .25s var(--ease) both}
-@keyframes g-chat-in{from{opacity:0;transform:scale(.85);transform-origin:0 0}to{opacity:1;transform:none}}
-/* near the right edge the bubble opens to the left of the pointer */
-.g-cur-you[data-flip] span{transform:translateX(calc(-100% - 28px))}
-.g-cur-you[data-flip].is-chat span{border-radius:14px 2px 14px 14px;animation:none}
-.g-cur-nupur{color:var(--fig-cursor-nupur);animation:g-wander 26s ease-in-out infinite alternate}
+/* Nupur: parked at the selected frame's bottom-right corner (Cursors.tsx moves it every frame; no wandering) */
+.g-cur-nupur{color:var(--fig-cursor-nupur);opacity:0;transition:opacity .3s}
 .g-cur-nupur span{margin-top:12px;background:var(--fig-cursor-nupur)}
-@keyframes g-wander{
-  0%{transform:translate(62vw,64vh)}
-  20%{transform:translate(70vw,38vh)}
-  40%{transform:translate(28vw,30vh)}
-  60%{transform:translate(20vw,58vh)}
-  80%{transform:translate(48vw,70vh)}
-  100%{transform:translate(78vw,52vh)}
-}
+/* near the right edge the tag/bubble opens to the left of her arrow */
+.g-cur-nupur[data-flip] span{transform:translateX(calc(-100% - 18px))}
+/* cursor chat (Figma's "/" chat bubble): Nupur's tag grows into a message bubble, square corner at her arrow */
+.g-cur-nupur.is-chat span{max-width:240px;white-space:normal;font-size:14px;line-height:1.35;padding:8px 12px;border-radius:2px 14px 14px 14px;
+  box-shadow:var(--fig-shadow);animation:g-chat-in .25s var(--ease) both}
+.g-cur-nupur[data-flip].is-chat span{border-radius:14px 2px 14px 14px;animation:none}
+@keyframes g-chat-in{from{opacity:0;transform:scale(.85);transform-origin:0 0}to{opacity:1;transform:none}}
 
 /* ---------- small screens ---------- */
 @media (max-width:520px){
@@ -162,10 +139,9 @@
 }
 
 @media (prefers-reduced-motion:reduce){
-  .g-world.is-moving{transition:none}
-  .g-cur-nupur{animation:none;transform:translate(70vw,30vh)}
+  .g-world.is-moving,.g-world.is-moving.is-slow{transition:none}
   .g-caret{animation:none}
-  .g-cur-you.is-chat span{animation:none}
+  .g-cur-nupur.is-chat span{animation:none}
 }
 
 /* ---------- Ask-Nupur: floating chat panel on the right (styled after Figma's AI chat panel) ----------
@@ -202,11 +178,6 @@
 .g-ask .field input:focus-visible{outline:none} /* the field's blue border already shows focus */
 .g-ask .send{width:30px;height:30px}
 .g-ask .send:disabled{background:#E5E5E5;color:#FFFFFF}
-/* while the chat is open, the bottom bar re-centres in the space left of the panel so it isn't covered */
-@media (min-width:760px){
-  .g-bar{transition:left .35s var(--ease)}
-  .g-root.is-asking .g-bar{left:calc((100vw - min(380px,calc(100vw - 24px)) - 24px) / 2)}
-}
 /* the sparkle button shows a ring while the chat is open */
 .g-star[aria-expanded="true"]{box-shadow:0 0 0 2px var(--fig-frame),0 0 0 4px var(--fig-blue)}
 @media (prefers-reduced-motion:reduce){.g-ask,.g-ask.is-open{transition:none}}

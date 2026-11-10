@@ -5,6 +5,7 @@ import Intro from "./Intro";
 import { AboutWall, FunWall, WorkWall } from "./Walls";
 import { Cursors } from "./Cursors";
 import ChatPanel from "../ChatPanel";
+import { CASES } from "@/lib/content";
 
 // The gallery is one CSS 3D room: a front wall (Work), a left wall (About) and a right wall (Fun),
 // plus a floor and ceiling. Nothing moves except a "camera": we move/turn the whole room in the opposite
@@ -37,10 +38,11 @@ export default function Gallery() {
   const [phase, setPhase] = useState<"intro" | "room">("intro");
   const [introGone, setIntroGone] = useState(false);
   const [entered, setEntered] = useState(false); // camera has started its first pull-back
-  const [note, setNote] = useState(false); // "How this works" card
   const [view, setView] = useState<View>("overview");
   const [focus, setFocus] = useState<number | null>(null); // which frame we stepped up to
   const [asking, setAsking] = useState(false); // Ask-Nupur floating chat panel
+  const [slow, setSlow] = useState(false); // the opening auto-pan uses a slower camera move
+  const autoPan = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const chatRef = useRef<HTMLElement>(null);
   const sparkRef = useRef<HTMLButtonElement>(null);
   const [vp, setVp] = useState({ w: 1440, h: 900 });
@@ -113,36 +115,40 @@ export default function Gallery() {
 
   // ----- navigation -----
   // opening a wall (tab or click) steps straight up to its first frame; the doorway view has no focus
+  // any move the visitor makes cancels the opening auto-pan and goes back to the normal camera speed
+  const userMoved = useCallback(() => {
+    clearTimeout(autoPan.current);
+    setSlow(false);
+  }, []);
+
   const go = useCallback((v: View) => {
-    setNote(false);
+    userMoved();
     setFocus(v === "overview" ? null : 0);
     setView(v);
-  }, []);
+  }, [userMoved]);
 
   const count = view === "overview" ? 0 : boxes[view].length;
   const step = useCallback(
     (dir: 1 | -1) => {
       if (view === "overview" || !count) return;
-      setNote(false);
+      userMoved();
       setFocus((f) => (f === null ? (dir === 1 ? 0 : count - 1) : Math.max(0, Math.min(count - 1, f + dir))));
     },
-    [view, count]
+    [view, count, userMoved]
   );
 
-  // Esc: close the note, otherwise back to the doorway (same as clicking the empty canvas)
+  // Esc: close the chat, otherwise back to the doorway (same as clicking the empty canvas)
   // open/close Ask-Nupur; opening focuses the question field, closing hands focus back to the sparkle button
   const setChat = useCallback((open: boolean) => {
     setAsking(open);
-    setNote(false);
     if (open) setTimeout(() => chatRef.current?.querySelector<HTMLInputElement>("#q")?.focus({ preventScroll: true }), 300);
     else sparkRef.current?.focus({ preventScroll: true });
   }, []);
 
   const back = useCallback(() => {
     if (asking) return setChat(false);
-    if (note) return setNote(false);
     if (view !== "overview") go("overview");
-  }, [asking, setChat, note, view, go]);
+  }, [asking, setChat, view, go]);
 
   // keyboard: arrows walk frame to frame, Esc steps back
   useEffect(() => {
@@ -173,11 +179,35 @@ export default function Gallery() {
     return () => removeEventListener("wheel", on);
   }, [phase, step]);
 
-  // intro → room: pull the camera back from the Work wall, then show the note
+  // intro → room: pull the camera back from the Work wall, pause, then slowly pan up to the Work wall
+  // (its first frame, same as the Work tab). Skipped if the visitor moves first.
+  const AUTO_PAN_DELAY = 2000; // ms after the room appears: 1.25s pull-back + a short pause
   const enter = useCallback(() => {
     setPhase("room");
     requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
-    setTimeout(() => setNote(true), 1300);
+    autoPan.current = setTimeout(() => {
+      setSlow(true);
+      setFocus(0);
+      setView("work");
+    }, AUTO_PAN_DELAY);
+  }, []);
+  useEffect(() => () => clearTimeout(autoPan.current), []);
+
+  // coming back from a case study page, skip the intro:
+  //   /#room        → the doorway view of the room ("Nupur Gidhi" in the breadcrumb)
+  //   /#work/<slug> → the Work wall, on that case's frame ("Work" / "Back to Work")
+  useLayoutEffect(() => {
+    const m = location.hash.match(/^#(room|work)(?:\/(.+))?$/);
+    if (!m) return;
+    history.replaceState(null, "", "/"); // a refresh after this plays the intro as usual
+    setIntroGone(true);
+    setPhase("room");
+    if (m[1] === "work") {
+      setView("work");
+      setFocus(Math.max(0, CASES.findIndex((c) => c.slug === m[2])));
+    }
+    // turn camera animation on only after the first placement, so the room appears already in position
+    setTimeout(() => setEntered(true), 400);
   }, []);
 
   const gone = useCallback(() => setIntroGone(true), []);
@@ -189,20 +219,19 @@ export default function Gallery() {
     // from the doorway, clicking a wall turns you to face it; when already facing a wall, the stage's click handler
     // takes you back to the doorway instead
     onOpen: () => { if (view === "overview") go(wall); },
-    onFocusFrame: (i: number) => { setNote(false); setFocus(i); },
+    onFocusFrame: (i: number) => { userMoved(); setFocus(i); },
   });
 
   return (
     <div
-      className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}${asking ? " is-asking" : ""}`}
+      className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}`}
       // room sizes for the CSS (app/gallery.css builds the walls, floor and ceiling from these)
       style={{ "--W": `${ROOM.W}px`, "--D": `${ROOM.D}px`, "--H": `${ROOM.H}px` } as CSSProperties}
     >
       {introGone && <h1 className="sr-only">Nupur Gidhi, product designer: portfolio gallery</h1>}
 
       {/* the room */}
-      {/* clicking empty canvas (anything that isn't a frame) while facing a wall goes back to the doorway view.
-          The "How this works" note only ever appears on first entry, so it doesn't come back here. */}
+      {/* clicking empty canvas (anything that isn't a frame) while facing a wall goes back to the doorway view. */}
       <div
         className="g-stage"
         style={{ perspective: `${P}px` }}
@@ -211,7 +240,7 @@ export default function Gallery() {
           if (view !== "overview" && !(e.target as Element).closest("[data-frame]")) go("overview");
         }}
       >
-        <div className={`g-world${entered ? " is-moving" : ""}`} style={{ transform: camera }}>
+        <div className={`g-world${entered ? " is-moving" : ""}${slow ? " is-slow" : ""}`} style={{ transform: camera }}>
           <div className="g-floor" />
           <div className="g-ceiling" />
           <WorkWall {...wallProps("work")} />
@@ -226,8 +255,6 @@ export default function Gallery() {
         <span aria-hidden="true">/</span>
         <span>{LABEL[view]}</span>
       </header>
-
-      {phase === "room" && note && <HowItWorks onClose={() => setNote(false)} />}
 
       <nav className="g-bar" aria-label="Gallery walls">
         {WALLS.map((w) => (
@@ -269,35 +296,6 @@ export default function Gallery() {
       <Cursors hint={view === "about" || view === "fun"} />
 
       {!introGone && <Intro onLeave={enter} onGone={gone} />}
-    </div>
-  );
-}
-
-// The "How this works" card, tucked in an envelope like the reference.
-function HowItWorks({ onClose }: { onClose: () => void }) {
-  const btn = useRef<HTMLButtonElement>(null);
-  useEffect(() => btn.current?.focus({ preventScroll: true }), []);
-  return (
-    <div className="g-note-wrap" role="dialog" aria-modal="false" aria-labelledby="g-note-h">
-      <div className="g-envelope">
-        <div className="g-note">
-          <h2 id="g-note-h">How this works</h2>
-          <p><b>Work</b>, <b>About</b> and <b>Fun</b> below turn you to face that wall. You can also click a wall.</p>
-          <p><b>Click</b> any frame to step up to it. <b>Scroll</b> or use the <b>arrows</b> to walk frame to frame.</p>
-          <p><b>Esc</b> steps back. <b>Click</b> the empty canvas to return here.</p>
-          <div className="g-sign">
-            <span>
-              <b>Nupur Gidhi</b>
-              <span>Product Designer</span>
-            </span>
-            <svg viewBox="0 0 80 28" width="72" height="26" aria-hidden="true">
-              <path d="M3 22c6-14 9-18 10-10s2 12 7 0 7-10 9-2 3 10 8-2 5-6 7 2 4 8 10 0 8-6 11 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </div>
-        </div>
-        <div className="g-pocket" />
-        <button ref={btn} type="button" className="g-gotit" onClick={onClose}>Got it</button>
-      </div>
     </div>
   );
 }
