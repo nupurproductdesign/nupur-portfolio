@@ -26,8 +26,10 @@
 
 /* a wall reads as a Figma section: name top-left; from elsewhere in the room it's one big click target */
 .g-section{position:absolute;top:30px;left:44px;font-size:16px;font-weight:500;color:var(--fig-muted)}
-.g-wall:not(.is-active){cursor:pointer}
-.g-wall:not(.is-active):hover{outline:3px solid var(--fig-blue);outline-offset:-3px}
+/* from the doorway, walls are click targets; facing a wall, the empty canvas zooms you back out */
+.g-root.is-overview .g-wall{cursor:pointer}
+.g-root.is-overview .g-wall:hover{outline:3px solid var(--fig-blue);outline-offset:-3px}
+.g-root.is-wall .g-stage{cursor:zoom-out}
 .g-row,.g-row-inner{display:flex;align-items:center;justify-content:center;gap:56px}
 .g-row{position:absolute;inset:0;padding:40px 110px 0}
 .g-row-inner{display:contents}

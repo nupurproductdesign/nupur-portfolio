@@ -160,16 +160,27 @@ export default function Gallery() {
     ref: (el: HTMLDivElement | null) => { wallRefs.current[wall] = el; },
     active: view === wall,
     focus: view === wall ? focus : null,
-    onOpen: () => go(wall),
+    // from the doorway, clicking a wall turns you to face it; when already facing a wall, the stage's click handler
+    // takes you back to the doorway instead
+    onOpen: () => { if (view === "overview") go(wall); },
     onFocusFrame: (i: number) => { setNote(false); setFocus(i); },
   });
 
   return (
-    <div className={`g-root${phase === "room" ? " is-room" : ""}`}>
+    <div className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}`}>
       {introGone && <h1 className="sr-only">Nupur Gidhi, product designer: portfolio gallery</h1>}
 
       {/* the room */}
-      <div className="g-stage" style={{ perspective: `${P}px` }} aria-hidden={phase !== "room"}>
+      {/* clicking empty canvas (anything that isn't a frame) while facing a wall goes back to the doorway view.
+          The "How this works" note only ever appears on first entry, so it doesn't come back here. */}
+      <div
+        className="g-stage"
+        style={{ perspective: `${P}px` }}
+        aria-hidden={phase !== "room"}
+        onClick={(e) => {
+          if (view !== "overview" && !(e.target as Element).closest("[data-frame]")) go("overview");
+        }}
+      >
         <div className={`g-world${entered ? " is-moving" : ""}`} style={{ transform: camera }}>
           <div className="g-floor" />
           <div className="g-ceiling" />
@@ -226,7 +237,7 @@ function HowItWorks({ onClose }: { onClose: () => void }) {
           <h2 id="g-note-h">How this works</h2>
           <p><b>Work</b>, <b>About</b> and <b>Fun</b> below turn you to face that wall. You can also click a wall.</p>
           <p><b>Click</b> any frame to step up to it. <b>Scroll</b> or use the <b>arrows</b> to walk frame to frame.</p>
-          <p><b>Esc</b> steps back.</p>
+          <p><b>Esc</b> steps back. <b>Click</b> the empty canvas to return here.</p>
           <div className="g-sign">
             <span>
               <b>Nupur Gidhi</b>

@@ -209,6 +209,8 @@ site below, kept unchanged so it can be compared or reused (Nupur's choice; dele
   **Ask Nupur (does nothing yet; Nupur will decide)** + ‹ n/N › counter, always in the bar so tabs never shift.
 - **Moves:** tab or click a wall → turn to face it. Click a frame → step up to it (Figma selection: blue outline,
   white handles, "Hug × Hug" tag); second click reaches links inside. Arrows / scroll walk frame to frame; Esc steps back.
+  Facing a wall (or a frame), a click on the empty canvas goes straight back to the doorway view, without the note
+  (zoom-out cursor shows this). The note only appears on first entry. 2026-11-10.
 - Headline copy is `GALLERY_HEADLINE` in `lib/content.ts` (TODO: Nupur picks the final line). About/Fun copy moved to
   `ABOUT` / `FUN` there, shared by `/` and `/gallery`.
 - **Not done yet:** drag to look around; phone layout is a first pass (room is small on tall screens); real photos.
