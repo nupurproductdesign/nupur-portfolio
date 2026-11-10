@@ -217,9 +217,8 @@
 ::selection { background: var(--selection-bg); color: var(--selection-text); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 
-/* ---------- GALLERY (/gallery): light Figma canvas (2026-11-10, Nupur: "same as the video, like I'm in a Figma file").
-   Scoped to .g-root, so the dark butter theme on / is untouched. Case tiles inside the gallery stay dark: they read as
-   dark artboards (designs) sitting on the light canvas. Contrast (WCAG AA):
+/* ---------- GALLERY (homepage /): light Figma canvas (2026-11-10, Nupur: "same as the video, like I'm in a Figma file").
+   Scoped to .g-root, so the dark butter theme on /classic is untouched. Case tiles get their own light block (.g-case, below). Contrast (WCAG AA):
    text #1E1E1E: 16.7 on white, 15.3 on canvas · muted #5C5C5C: 6.1 on canvas, 6.9 on white
    white on blue-ink #0A6DC2 5.3 · blue-ink text on white 5.3, on canvas 4.8 · white on orange 5.2, on purple 5.0
    #0D99FF (Figma's own blue) is used ONLY for non-text outlines/handles, never behind or as text. ---------- */
@@ -246,7 +245,7 @@
 }
 
 /* Case tiles inside the gallery: light versions of the tile + mock-screen roles (2026-11-10, Nupur: "make them light").
-   Scoped to .g-case so the tiles on / stay dark. Contrast: text 16.7 on white / 15.3 on #F5F5F5, muted 5.8+,
+   Scoped to .g-case so the tiles on /classic stay dark. Contrast: text 16.7 on white / 15.3 on #F5F5F5, muted 5.8+,
    green pill 4.8, amber pill 5.3, blue pill / note row 5.8 (each on its own soft tint), white on mock button 5.2. */
 .g-root .g-case {
   --bg: #FFFFFF;              /* phone screen */

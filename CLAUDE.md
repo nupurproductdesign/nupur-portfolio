@@ -1,6 +1,8 @@
 # Nupur Gidhi — portfolio
 
 Personal portfolio for Nupur Gidhi, product designer. Next.js (App Router) + TypeScript + plain global CSS.
+**Homepage is the gallery (see "Gallery = the homepage" below).** Everything about the split-screen layout, dark themes,
+nav and rail below describes the classic site, now at `/classic`.
 `prototype.html` is the original vibe-coded build and the **source of truth** for layout, styling, copy and
 interactions: match it exactly unless Nupur says otherwise.
 
@@ -185,9 +187,11 @@ Principle: visuals carry the weight, copy only captions them. No long paragraphs
 - No horizontal scroll: the closed chat column drops its 1px left border (it made the page 1px too wide), and `.shell` has `overflow-x:clip` as a safety net (clip, not hidden, so sticky still works). Checked 360–1920px, chat open and closed. 2026-10-01.
 - Chat heading "Ask-Nupur" (`.ask-h h2`) is styled identically to the rail headline (36px, lh 1.08, -0.012em), and the chat subtext (`.ask-h p`) matches the rail subline (14px, lh 1.5). Nupur's call, 2026-10-01/02.
 
-## Gallery page (`/gallery`, started 2026-11-10, work in progress)
-A second take on the portfolio, inspired by a Framer portfolio Nupur shared (Figma-canvas UI, 3D walk-through) crossed with
-an art gallery room. Lives beside `/` so the two can be compared; swap it in later only if Nupur says so.
+## Gallery = the homepage (`/`, started 2026-11-10)
+The portfolio as a gallery room, inspired by a Framer portfolio Nupur shared (Figma-canvas UI, 3D walk-through).
+**Routes (2026-11-10):** `/` = gallery (`app/page.tsx` + `app/gallery.css`). `/classic` = the original dark split-screen
+site below, kept unchanged so it can be compared or reused (Nupur's choice; delete later only if she says so).
+`/gallery` redirects to `/` (307, in `next.config.ts`).
 - **Look (2026-11-10, Nupur: "forget the old theme, same as the video, like I'm in a Figma file"):** the gallery
   does NOT follow VISUAL-IDENTITY.md. Light Figma canvas: walls, floor and ceiling are all the same `#F5F5F5` canvas with a 40px
   `--fig-grid` dot grid, like Figma's canvas (the room is felt only through perspective, no floorboards/beams), white frames, `#1E1E1E`
@@ -195,7 +199,7 @@ an art gallery room. Lives beside `/` so the two can be compared; swap it in lat
   behind text); `#0A6DC2` for anything with text (active tab fill, size tag, selected frame name, 5.3:1 with white).
   Cursors: orange "You" `#C2410C`, purple "Nupur" `#8A3FFC`. Tokens: `--fig-*` block scoped to `.g-root` at the end
   of `app/tokens.css`. Case tiles are light too (white artboard, `#F5F5F5` tile, dark-ink pills), via a
-  `.g-root .g-case` token block in `app/tokens.css`; tiles on `/` stay dark. `/` keeps the dark butter theme.
+  `.g-root .g-case` token block in `app/tokens.css`; tiles on `/classic` stay dark. `/classic` keeps the dark butter theme.
 - **Flow:** intro canvas with one selected Figma text frame; the headline types itself in black, then the camera pulls
   back into the room and a "How this works" card in an envelope appears (black "Got it").
 - **Room:** CSS 3D, one "camera" (`components/gallery/Gallery.tsx`). Left wall = **Work** (case tiles), front wall =

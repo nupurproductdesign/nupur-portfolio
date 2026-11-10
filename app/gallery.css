@@ -1,4 +1,4 @@
-/* GALLERY (/gallery): the portfolio as one CSS 3D room, drawn like a light Figma file (matches the reference video).
+/* GALLERY (homepage /): the portfolio as one CSS 3D room, drawn like a light Figma file (matches the reference video).
    Colours only via the --fig-* tokens (app/tokens.css, "GALLERY" block, scoped to .g-root). Font: Geist only.
    Room sizes must match ROOM in components/gallery/Gallery.tsx: W (front wall) 2400 · D (side walls) 2400 · H 1000. */
 
