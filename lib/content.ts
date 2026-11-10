@@ -53,7 +53,7 @@ export const CANNED: Record<string, string> = {
 };
 
 // ---------- Gallery (/gallery) ----------
-// TODO(nupur): final headline. `lead` types itself in; `note` lands on the butter post-it at the end.
+// TODO(nupur): final headline. The gallery intro types `lead` + `note` as one line.
 export const GALLERY_HEADLINE = { lead: "Nupur is a Product Designer who", note: "Vibe Codes" };
 
 // About copy, shared by the About section on / and the About wall in /gallery.

@@ -167,21 +167,6 @@
   --spine-3: var(--accent); --spine-3-text: var(--on-accent);
   --origami: #8A7631;       /* deeper butter so the crane shows on the light paper (3.95:1) */
   --glow-4: rgba(243, 223, 154, .14);
-  /* Gallery (/gallery): a dark room drawn like a Figma canvas. Text sits on walls/cards only in approved pairs:
-     --text on --gal-wall 12.6:1, --text-muted on --gal-wall 5.8:1, --text on --surface-2 10.5:1. */
-  --gal-canvas: #1B1B1B;     /* outside the room / intro canvas */
-  --gal-canvas-dot: #333333;
-  --gal-wall: #2E2E2E;       /* side walls */
-  --gal-wall-front: #353535; /* front wall catches a little more light */
-  --gal-floor: #1E1E1E;
-  --gal-floor-line: #262626; /* floorboards */
-  --gal-ceiling: #191919;
-  --gal-beam: #202020;       /* ceiling beams (kept faint: from the side they fan out) */
-  --gal-select: var(--accent);            /* Figma selection outline + handles, in butter (no Figma blue: one accent only) */
-  --gal-cursor-you: var(--accent);        /* visitor's cursor tag: butter fill, on-accent text 12.6:1 */
-  --gal-cursor-you-text: var(--on-accent);
-  --gal-cursor-nupur: #F4F4F4;            /* Nupur's cursor tag: light fill, #222 text 14.5:1 */
-  --gal-cursor-nupur-text: #222222;
   color-scheme: dark;
 }
 
@@ -231,3 +216,56 @@
 
 ::selection { background: var(--selection-bg); color: var(--selection-text); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+
+/* ---------- GALLERY (homepage /): light Figma canvas (2026-11-10, Nupur: "same as the video, like I'm in a Figma file").
+   Scoped to .g-root, so the dark butter theme on /classic is untouched. Case tiles get their own light block (.g-case, below). Contrast (WCAG AA):
+   text #1E1E1E: 16.7 on white, 15.3 on canvas · muted #5C5C5C: 6.1 on canvas, 6.9 on white
+   white on blue-ink #0A6DC2 5.3 · blue-ink text on white 5.3, on canvas 4.8 · white on orange 5.2, on purple 5.0
+   #0D99FF (Figma's own blue) is used ONLY for non-text outlines/handles, never behind or as text. ---------- */
+.g-root {
+  --fig-canvas: #F5F5F5;
+  --fig-grid: #C8C8C8;        /* dot grid on every room surface (walls, floor, ceiling are all canvas); decorative */
+  --fig-frame: #FFFFFF;       /* cards, bar, note */
+  --fig-line: #E5E5E5;
+  --fig-text: #1E1E1E;
+  --fig-muted: #5C5C5C;
+  --fig-tint: rgba(0, 0, 0, .05);
+  --fig-blue: #0D99FF;        /* selection outline + handles (non-text) */
+  --fig-blue-ink: #0A6DC2;    /* blue with/behind text: active tab, size tag, selected frame name */
+  --fig-on-blue: #FFFFFF;
+  --fig-btn: #1E1E1E;         /* "Got it", Ask Nupur star */
+  --fig-btn-hover: #3A3A3A;
+  --fig-on-btn: #FFFFFF;
+  --fig-cursor-you: #C2410C;  /* orange, like "Client" in the reference */
+  --fig-cursor-nupur: #8A3FFC;/* purple, like "Alim" in the reference */
+  --fig-on-cursor: #FFFFFF;
+  --fig-shadow: 0 1px 2px rgba(0,0,0,.06), 0 18px 40px -18px rgba(0,0,0,.22);
+  --focus: var(--fig-blue-ink);
+  color-scheme: light;
+}
+
+/* Case tiles inside the gallery: light versions of the tile + mock-screen roles (2026-11-10, Nupur: "make them light").
+   Scoped to .g-case so the tiles on /classic stay dark. Contrast: text 16.7 on white / 15.3 on #F5F5F5, muted 5.8+,
+   green pill 4.8, amber pill 5.3, blue pill / note row 5.8 (each on its own soft tint), white on mock button 5.2. */
+.g-root .g-case {
+  --bg: #FFFFFF;              /* phone screen */
+  --surface: #F5F5F5;         /* tile background */
+  --surface-2: #FFFFFF;       /* mock cards */
+  --line: #E5E5E5;
+  --text: #1E1E1E;
+  --text-muted: #5C5C5C;
+  --tint: rgba(0, 0, 0, .05);
+  --tag-bg: #FFFFFF;  --tag-text: #1E1E1E;  --tag-dot: var(--fig-blue-ink);
+  --btn-bg: #1E1E1E;  --btn-text: #FFFFFF;  --btn-hover: #3A3A3A;  --btn-active: #000000;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.06), 0 12px 28px -14px rgba(0,0,0,.25);
+  --phone-frame: #1E1E1E;
+  --mock-av-solid: #1E1E1E;
+  --pill-1-bg: rgba(111, 207, 151, .16); --pill-1: #1E7B4A;
+  --pill-2-bg: rgba(233, 180, 84, .18);  --pill-2: #8A5A00;
+  --pill-3-bg: rgba(140, 149, 255, .16); --pill-3: #3F4BD1;
+  --pill-4-bg: #EEEEEE;                  --pill-4: #5C5C5C;
+  --note-row-bg: rgba(140, 149, 255, .16); --note-row-text: #3F4BD1;
+  --mock-soft-bg: rgba(111, 207, 151, .16); --mock-soft-text: #1E7B4A;
+  --glow-1: rgba(140, 149, 255, .22); --glow-2: rgba(233, 180, 84, .22);
+  --glow-3: rgba(111, 207, 151, .22); --glow-4: rgba(13, 153, 255, .16);
+}
