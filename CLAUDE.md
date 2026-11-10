@@ -202,15 +202,24 @@ site below, kept unchanged so it can be compared or reused (Nupur's choice; dele
   `.g-root .g-case` token block in `app/tokens.css`; tiles on `/classic` stay dark. `/classic` keeps the dark butter theme.
 - **Flow:** intro canvas with one selected Figma text frame; the headline types itself in black, then the camera pulls
   back into the room and a "How this works" card in an envelope appears (black "Got it").
-- **Room:** CSS 3D, one "camera" (`components/gallery/Gallery.tsx`). Left wall = **Work** (case tiles), front wall =
-  **About** (statement, quick facts, experience, links), right wall = **Fun** (paintings, nightstand, crane). Sizes in
-  `ROOM` must match `app/gallery/gallery.css`.
+- **Room:** CSS 3D, one "camera" (`components/gallery/Gallery.tsx`). **Front wall = Work** (case tiles, what you face
+  from the doorway), **left wall = About** (statement, quick facts, experience, links), **right wall = Fun** (paintings,
+  nightstand, crane). Work and About swapped places on 2026-11-10 (Nupur). Room size lives only in
+  `ROOM` (Gallery.tsx), passed to the CSS as `--W --D --H`. **Depth D = 3200** (2400 felt too close, 4000 too far with
+  empty side walls; 2026-11-10). About/Fun frames are spread along their whole wall (`space-evenly`) so the nearest
+  ones fill the screen edges from the doorway. Keep W, D, H multiples of 40 (dot grid).
 - **Bottom bar** (white, like the video): Work · About · Fun (active = solid blue fill, white text) + black ★
   **Ask Nupur (does nothing yet; Nupur will decide)** + ‹ n/N › counter, always in the bar so tabs never shift.
-- **Moves:** tab or click a wall → turn to face it. Click a frame → step up to it (Figma selection: blue outline,
-  white handles, "Hug × Hug" tag); second click reaches links inside. Arrows / scroll walk frame to frame; Esc steps back.
-  Facing a wall (or a frame), a click on the empty canvas goes straight back to the doorway view, without the note
-  (zoom-out cursor shows this). The note only appears on first entry. 2026-11-10.
+- **Moves (2026-11-10):** a tab (or clicking a wall from the doorway) turns you to that wall and steps straight up to
+  its **first frame**, framed carousel-style with **30% of the next frame** peeking in on the right (`PEEK` in
+  Gallery.tsx). Arrows / scroll / ‹ › walk frame to frame with the same peek; the last frame is centred. Clicking the
+  peeking frame steps to it. Figma selection on the focused frame (blue outline, white handles, "Hug × Hug" tag); a
+  second click reaches links inside. **Esc or a click on the empty canvas** goes straight back to the doorway view,
+  without the note (zoom-out cursor shows this). The note only appears on first entry.
+- **Cursor chat hint (2026-11-10):** on the **About and Fun walls only (never Work)**, the orange "You" tag turns into a
+  Figma-style cursor chat bubble: "Click anywhere on the canvas to go back to the start". First ~1.4s after arriving,
+  then once every 10s, showing 3.5s each time (`HINT_*` in `components/gallery/Cursors.tsx`). Opens to the left near
+  the right screen edge. Mouse/trackpad only (no pointer on touch screens).
 - Headline copy is `GALLERY_HEADLINE` in `lib/content.ts` (TODO: Nupur picks the final line). About/Fun copy moved to
   `ABOUT` / `FUN` there, shared by `/` and `/gallery`.
 - **Not done yet:** drag to look around; phone layout is a first pass (room is small on tall screens); real photos.

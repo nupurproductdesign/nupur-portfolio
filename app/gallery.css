@@ -1,6 +1,7 @@
 /* GALLERY (homepage /): the portfolio as one CSS 3D room, drawn like a light Figma file (matches the reference video).
    Colours only via the --fig-* tokens (app/tokens.css, "GALLERY" block, scoped to .g-root). Font: Geist only.
-   Room sizes must match ROOM in components/gallery/Gallery.tsx: W (front wall) 2400 · D (side walls) 2400 · H 1000. */
+   Room sizes come from ROOM in components/gallery/Gallery.tsx as --W (front wall width), --D (depth = side wall length)
+   and --H (height), set on .g-root. Change them there, not here. */
 
 .g-root{position:fixed;inset:0;overflow:hidden;background:var(--fig-canvas);color:var(--fig-text);font-family:var(--font-sans);user-select:none;-webkit-user-select:none}
 .g-root ::selection{background:var(--fig-blue-ink);color:var(--fig-on-blue)}
@@ -13,16 +14,18 @@
 .g-world.is-moving{transition:transform 1.25s cubic-bezier(.65,0,.25,1)}
 
 /* Every surface is the same Figma dot-grid canvas: the room is only felt through perspective, as the rows of dots
-   bend at the corners. 40px spacing divides every surface (2400 × 1000 walls, 2400 × 2400 floor/ceiling), so the
-   rows line up across corners. Dots are 2px across so they survive being shrunk on the far wall. */
+   bend at the corners. 40px spacing divides every room size (keep W, D, H multiples of 40), so the rows line up
+   across corners. Dots are 2px across so they survive being shrunk on the far wall. */
 .g-wall,.g-floor,.g-ceiling{position:absolute;backface-visibility:hidden;
   background:radial-gradient(circle,var(--fig-grid) 1px,transparent 1.6px) 0 0/40px 40px,var(--fig-canvas)}
-.g-wall{top:-500px;left:-1200px;width:2400px;height:1000px}
-.g-wall-about{transform:translateZ(-1200px)}
-.g-wall-work{transform:translateX(-1200px) rotateY(90deg)}  /* faces into the room from the left */
-.g-wall-fun{transform:translateX(1200px) rotateY(-90deg)}   /* faces into the room from the right */
-.g-floor{left:-1200px;top:-1200px;width:2400px;height:2400px;transform:translateY(500px) rotateX(90deg)}
-.g-ceiling{left:-1200px;top:-1200px;width:2400px;height:2400px;transform:translateY(-500px) rotateX(-90deg)}
+/* --len = the wall's own length: the front wall is W wide, the side walls run the room's depth D */
+.g-wall{--len:var(--D);top:calc(var(--H) / -2);left:calc(var(--len) / -2);width:var(--len);height:var(--H)}
+.g-wall-work{--len:var(--W);transform:translateZ(calc(var(--D) / -2))}                 /* Work: straight ahead */
+.g-wall-about{transform:translateX(calc(var(--W) / -2)) rotateY(90deg)} /* About: faces into the room from the left */
+.g-wall-fun{transform:translateX(calc(var(--W) / 2)) rotateY(-90deg)}   /* Fun: faces into the room from the right */
+.g-floor,.g-ceiling{left:calc(var(--W) / -2);top:calc(var(--D) / -2);width:var(--W);height:var(--D)}
+.g-floor{transform:translateY(calc(var(--H) / 2)) rotateX(90deg)}
+.g-ceiling{transform:translateY(calc(var(--H) / -2)) rotateX(-90deg)}
 
 /* a wall reads as a Figma section: name top-left; from elsewhere in the room it's one big click target */
 .g-section{position:absolute;top:30px;left:44px;font-size:16px;font-weight:500;color:var(--fig-muted)}
@@ -32,6 +35,9 @@
 .g-root.is-wall .g-stage{cursor:zoom-out}
 .g-row,.g-row-inner{display:flex;align-items:center;justify-content:center;gap:56px}
 .g-row{position:absolute;inset:0;padding:40px 110px 0}
+/* side walls: spread the frames along the whole wall, so the nearest ones sit close to you at the screen edges
+   instead of leaving the near half of the wall empty */
+.g-wall-about .g-row,.g-wall-fun .g-row{justify-content:space-evenly;padding-inline:160px}
 .g-row-inner{display:contents}
 
 /* ---------- Figma frame ---------- */
@@ -129,6 +135,13 @@
 .g-cur span{font-size:12px;font-weight:500;line-height:1;padding:5px 8px;border-radius:4px;white-space:nowrap;color:var(--fig-on-cursor)}
 .g-cur-you{opacity:0;transition:opacity .2s}
 .g-cur-you span{background:var(--fig-cursor-you)}
+/* cursor chat (Figma's "/" chat bubble): the "You" tag grows into a message bubble, square corner at the pointer */
+.g-cur-you.is-chat span{max-width:240px;white-space:normal;font-size:14px;line-height:1.35;padding:8px 12px;border-radius:2px 14px 14px 14px;
+  box-shadow:var(--fig-shadow);animation:g-chat-in .25s var(--ease) both}
+@keyframes g-chat-in{from{opacity:0;transform:scale(.85);transform-origin:0 0}to{opacity:1;transform:none}}
+/* near the right edge the bubble opens to the left of the pointer */
+.g-cur-you[data-flip] span{transform:translateX(calc(-100% - 28px))}
+.g-cur-you[data-flip].is-chat span{border-radius:14px 2px 14px 14px;animation:none}
 .g-cur-nupur{color:var(--fig-cursor-nupur);animation:g-wander 26s ease-in-out infinite alternate}
 .g-cur-nupur span{margin-top:12px;background:var(--fig-cursor-nupur)}
 @keyframes g-wander{
@@ -151,4 +164,5 @@
   .g-world.is-moving{transition:none}
   .g-cur-nupur{animation:none;transform:translate(70vw,30vh)}
   .g-caret{animation:none}
+  .g-cur-you.is-chat span{animation:none}
 }

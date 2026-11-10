@@ -65,7 +65,7 @@ function Frame({ i, name, focus, onFocusFrame, children, className = "" }: {
   );
 }
 
-// ---------- LEFT WALL: Work ----------
+// ---------- FRONT WALL: Work ----------
 export function WorkWall(p: WallProps) {
   return (
     <WallShell wall="work" title="Work" {...p}>
@@ -78,7 +78,7 @@ export function WorkWall(p: WallProps) {
   );
 }
 
-// ---------- FRONT WALL: About ----------
+// ---------- LEFT WALL: About ----------
 export function AboutWall(p: WallProps) {
   const s = ABOUT.statement;
   const f = { focus: p.focus, onFocusFrame: p.onFocusFrame };

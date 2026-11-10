@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Intro from "./Intro";
 import { AboutWall, FunWall, WorkWall } from "./Walls";
 import { Cursors } from "./Cursors";
 
-// The gallery is one CSS 3D room: a front wall (About), a left wall (Work) and a right wall (Fun),
+// The gallery is one CSS 3D room: a front wall (Work), a left wall (About) and a right wall (Fun),
 // plus a floor and ceiling. Nothing moves except a "camera": we move/turn the whole room in the opposite
 // direction, so the visitor feels like they walk and turn. All sizes below are in room pixels.
-export const ROOM = { W: 2400, D: 2400, H: 1000 }; // width (front wall), depth (side walls), height
+// D (depth) sets how far away the front wall feels from the doorway: bigger = farther. 2400 felt too close,
+// 4000 too far and empty (2026-11-10), so 3200. Keep every number a multiple of 40 so the dot grid meets at corners.
+export const ROOM = { W: 2400, D: 3200, H: 1000 }; // width (front wall), depth (side walls), height
 
 export type Wall = "work" | "about" | "fun";
 type View = "overview" | Wall;
@@ -25,8 +27,8 @@ const perspectiveFor = (w: number, h: number) => (w >= h ? 1.2 * h : 1.5 * w);
 // u = sideways along the wall (to the viewer's right), v = up/down (down is +).
 function facing(wall: Wall, u: number, v: number, d: number): Pose {
   const { W, D } = ROOM;
-  if (wall === "about") return { yaw: 0, x: u, y: v, z: -D / 2 + d };
-  if (wall === "work") return { yaw: -90, x: -W / 2 + d, y: v, z: -u }; // turned left
+  if (wall === "work") return { yaw: 0, x: u, y: v, z: -D / 2 + d }; // straight ahead
+  if (wall === "about") return { yaw: -90, x: -W / 2 + d, y: v, z: -u }; // turned left
   return { yaw: 90, x: W / 2 - d, y: v, z: u }; // turned right
 }
 
@@ -73,25 +75,32 @@ export default function Gallery() {
 
   const P = perspectiveFor(vp.w, vp.h);
   const BAR = 72; // screen px kept clear at the bottom for the tab bar
+  const PEEK = 0.3; // how much of the next frame shows beside the focused one (30%, Nupur 2026-11-10)
 
   const pose: Pose = useMemo(() => {
     const { W, D, H } = ROOM;
     if (view === "overview") {
-      // stand just outside the doorway, looking at the About wall. Fit the doorway's height to the screen,
+      // stand just outside the doorway, looking at the Work wall. Fit the doorway's height to the screen,
       // but on narrow screens step back further so the side walls still show.
       const e = Math.max((H * P) / vp.h, (W * P) / (1.6 * vp.w));
       return { yaw: 0, x: 0, y: 0, z: D / 2 + e * (entered ? 1 : 0.55) };
     }
     const box = focus !== null ? boxes[view][focus] : undefined;
     if (box) {
-      // step up to one frame: it fills ~72% of the height or ~82% of the width, whichever is tighter
-      const s = Math.min((0.72 * (vp.h - BAR)) / box.h, (0.82 * vp.w) / box.w);
-      return facing(view, box.cx, box.cy + BAR / 2 / s, Math.max(P / s, 140));
+      // step up to one frame, carousel-style: frame it together with the first 30% of the NEXT frame, so the
+      // visitor can see there's more to the right. The last frame has no next one, so it's simply centred.
+      const next = boxes[view][focus! + 1];
+      const left = box.cx - box.w / 2;
+      const right = next ? next.cx - next.w / 2 + PEEK * next.w : box.cx + box.w / 2;
+      // fit the focused frame's height (72% of the space above the bar) and the whole span's width (90%)
+      const s = Math.min((0.72 * (vp.h - BAR)) / box.h, (0.9 * vp.w) / (right - left));
+      return facing(view, (left + right) / 2, box.cy + BAR / 2 / s, Math.max(P / s, 140));
     }
-    // whole wall: fit its height (and width when it can), but never back through the opposite wall
-    const L = view === "about" ? W : D;
+    // whole wall: fit its height (and width when it can), but never back through the opposite wall.
+    // The front wall is W wide; side walls run the room's depth D, with their frames spread along all of it.
+    const L = view === "work" ? W : D;
     const s = Math.min((0.66 * vp.h) / H, (0.9 * vp.w) / L);
-    const maxD = view === "about" ? D * 1.3 : W * 0.95;
+    const maxD = view === "work" ? D * 1.3 : W * 0.95;
     const d = Math.min(P / s, maxD);
     return facing(view, 0, (BAR / 2) * (d / P), d);
   }, [view, focus, boxes, vp, P, entered]);
@@ -99,9 +108,10 @@ export default function Gallery() {
   const camera = `translateZ(${P}px) rotateY(${pose.yaw}deg) translate3d(${-pose.x}px, ${-pose.y}px, ${-pose.z}px)`;
 
   // ----- navigation -----
+  // opening a wall (tab or click) steps straight up to its first frame; the doorway view has no focus
   const go = useCallback((v: View) => {
     setNote(false);
-    setFocus(null);
+    setFocus(v === "overview" ? null : 0);
     setView(v);
   }, []);
 
@@ -115,11 +125,11 @@ export default function Gallery() {
     [view, count]
   );
 
+  // Esc: close the note, otherwise back to the doorway (same as clicking the empty canvas)
   const back = useCallback(() => {
     if (note) return setNote(false);
-    if (focus !== null) return setFocus(null);
-    if (view !== "overview") setView("overview");
-  }, [note, focus, view]);
+    if (view !== "overview") go("overview");
+  }, [note, view, go]);
 
   // keyboard: arrows walk frame to frame, Esc steps back
   useEffect(() => {
@@ -147,7 +157,7 @@ export default function Gallery() {
     return () => removeEventListener("wheel", on);
   }, [phase, step]);
 
-  // intro → room: pull the camera back from the About wall, then show the note
+  // intro → room: pull the camera back from the Work wall, then show the note
   const enter = useCallback(() => {
     setPhase("room");
     requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
@@ -167,7 +177,11 @@ export default function Gallery() {
   });
 
   return (
-    <div className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}`}>
+    <div
+      className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}`}
+      // room sizes for the CSS (app/gallery.css builds the walls, floor and ceiling from these)
+      style={{ "--W": `${ROOM.W}px`, "--D": `${ROOM.D}px`, "--H": `${ROOM.H}px` } as CSSProperties}
+    >
       {introGone && <h1 className="sr-only">Nupur Gidhi, product designer: portfolio gallery</h1>}
 
       {/* the room */}
@@ -219,7 +233,8 @@ export default function Gallery() {
       </nav>
 
 
-      <Cursors />
+      {/* cursor chat hint only on About and Fun (not Work), Nupur 2026-11-10 */}
+      <Cursors hint={view === "about" || view === "fun"} />
 
       {!introGone && <Intro onLeave={enter} onGone={gone} />}
     </div>
