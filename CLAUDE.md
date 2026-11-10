@@ -196,7 +196,8 @@ site below, kept unchanged so it can be compared or reused (Nupur's choice; dele
   does NOT follow VISUAL-IDENTITY.md. Light Figma canvas: walls, floor and ceiling are all the same `#F5F5F5` canvas with a 40px
   `--fig-grid` dot grid, like Figma's canvas (the room is felt only through perspective, no floorboards/beams), white frames, `#1E1E1E`
   text, Geist only (no Funnel Display, no butter post-it). Figma blue `#0D99FF` for outlines/handles only (fails AA
-  behind text); `#0A6DC2` for anything with text (active tab fill, size tag, selected frame name, 5.3:1 with white).
+  behind text); `#0A6DC2` for text-bearing blue (size tag, selected frame name, 5.3:1 with white). **Exception:** the selected
+  tab fill is `#0D99FF` at Nupur's request (2026-11-10), white label 3.0:1, below AA for 14px text.
   Cursors: orange "You" `#C2410C`, purple "Nupur" `#8A3FFC`. Tokens: `--fig-*` block scoped to `.g-root` at the end
   of `app/tokens.css`. Case tiles are light too (white artboard, `#F5F5F5` tile, dark-ink pills), via a
   `.g-root .g-case` token block in `app/tokens.css`; tiles on `/classic` stay dark. `/classic` keeps the dark butter theme.
@@ -208,14 +209,21 @@ site below, kept unchanged so it can be compared or reused (Nupur's choice; dele
   `ROOM` (Gallery.tsx), passed to the CSS as `--W --D --H`. **Depth D = 3200** (2400 felt too close, 4000 too far with
   empty side walls; 2026-11-10). About/Fun frames are spread along their whole wall (`space-evenly`) so the nearest
   ones fill the screen edges from the doorway. Keep W, D, H multiples of 40 (dot grid).
-- **Bottom bar** (white, like the video): Work · About · Fun (active = solid blue fill, white text) + black ★
-  **Ask Nupur (does nothing yet; Nupur will decide)** + ‹ n/N › counter, always in the bar so tabs never shift.
+- **Bottom bar** (white, like the video): Work · About · Fun (active = solid blue fill, white text) + black sparkle button
+  (Nupur's 4-point sparkle, `public/ask-nupur/Subtract.svg`, inlined) **Ask Nupur: opens the chat (below)** + ‹ n/N › counter, always in the bar so tabs never shift.
 - **Moves (2026-11-10):** a tab (or clicking a wall from the doorway) turns you to that wall and steps straight up to
   its **first frame**, framed carousel-style with **30% of the next frame** peeking in on the right (`PEEK` in
   Gallery.tsx). Arrows / scroll / ‹ › walk frame to frame with the same peek; the last frame is centred. Clicking the
   peeking frame steps to it. Figma selection on the focused frame (blue outline, white handles, "Hug × Hug" tag); a
   second click reaches links inside. **Esc or a click on the empty canvas** goes straight back to the doorway view,
   without the note (zoom-out cursor shows this). The note only appears on first entry.
+- **Ask-Nupur in the gallery (2026-11-10):** the sparkle button toggles a **floating panel on the right** (12px from the
+  edges, 380px wide, rounded, shadow), styled after Figma's AI chat panel Nupur shared. It is the **same `ChatPanel`
+  component** as the classic site, so every element is unchanged (title + ⓘ disclaimer, reset, close, welcome, the 4
+  suggested questions, "Ask about Nupur…" input, `/api/ask`); only the look differs: light tokens in the
+  `.g-root .g-ask` block of `tokens.css`, shapes in `app/gallery.css`. Visitor messages = grey `#F0F0F0` bubbles on the
+  right; Ask-Nupur answers = plain text, no bubble; sentence-case title. Esc closes it (focus returns to the sparkle);
+  arrow keys and scroll inside it don't move the camera; the bottom bar re-centres beside it (≥760px wide).
 - **Cursor chat hint (2026-11-10):** on the **About and Fun walls only (never Work)**, the orange "You" tag turns into a
   Figma-style cursor chat bubble: "Click anywhere on the canvas to go back to the start". First ~1.4s after arriving,
   then once every 10s, showing 3.5s each time (`HINT_*` in `components/gallery/Cursors.tsx`). Opens to the left near

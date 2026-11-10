@@ -101,7 +101,8 @@
 /* active tab: solid blue fill with white text, as in the reference */
 .g-tab{padding:7px 12px;border-radius:7px;font-size:14px;font-weight:500;color:var(--fig-text);transition:background .15s,color .15s}
 .g-tab:hover{background:var(--fig-tint)}
-.g-tab[aria-current="true"]{background:var(--fig-blue-ink);color:var(--fig-on-blue)}
+/* selected tab: Figma's own blue #0D99FF (Nupur, 2026-11-10). White on it is 3.0:1, below AA for 14px text */
+.g-tab[aria-current="true"]{background:var(--fig-blue);color:var(--fig-on-blue)}
 .g-star{display:grid;place-items:center;width:32px;height:32px;margin:0 2px 0 4px;border-radius:7px;background:var(--fig-btn);color:var(--fig-on-btn);transition:background .2s}
 .g-star:hover{background:var(--fig-btn-hover)}
 /* frame counter, always in the bar (greyed in the overview) so the tabs never shift */
@@ -166,3 +167,46 @@
   .g-caret{animation:none}
   .g-cur-you.is-chat span{animation:none}
 }
+
+/* ---------- Ask-Nupur: floating chat panel on the right (styled after Figma's AI chat panel) ----------
+   Same component and elements as the classic site's chat (components/ChatPanel.tsx); colours come from the
+   ".g-root .g-ask" block in tokens.css, shapes from here. */
+.g-ask{position:fixed;top:12px;right:12px;bottom:12px;z-index:55;width:min(380px,calc(100vw - 24px));display:flex;flex-direction:column;
+  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.06),0 24px 60px -20px rgba(0,0,0,.28);
+  overflow:hidden;user-select:text;-webkit-user-select:text;
+  opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .25s var(--ease),transform .35s var(--ease),visibility 0s .35s}
+.g-ask.is-open{opacity:1;visibility:visible;transform:none;transition:opacity .25s var(--ease),transform .35s var(--ease),visibility 0s}
+.g-ask .ask{height:100%;min-height:0;flex:1;font-family:var(--font-sans)}
+/* header: title like "Add dummy values" in the reference, sentence case, icons on the right */
+.g-ask .ask-bar{border-bottom:0;padding:0 8px 0 16px}
+.g-ask .ask-title .label{font-size:15px;font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--text)}
+.g-ask .icon-btn{width:30px;height:30px;border-radius:6px}
+.g-ask .info-btn{border-radius:6px}
+.g-ask .tip{box-shadow:var(--shadow-card)}
+/* welcome + suggested questions */
+.g-ask .welcome h2{font-family:var(--font-sans);font-weight:600;font-size:22px;letter-spacing:-.025em}
+.g-ask .welcome p{font-size:14px}
+.g-ask .chips{gap:6px;margin-top:16px}
+.g-ask .chip{border:0;background:var(--surface-2);color:var(--text);border-radius:12px;padding:8px 12px;font-size:14px}
+.g-ask .chip:hover{background:#E6E6E6;color:var(--text)}
+/* messages: visitor = grey rounded bubble on the right; Ask-Nupur = plain text, no bubble (like the reference) */
+.g-ask .log{gap:18px;padding:8px 16px 16px}
+.g-ask .msg{font-size:15px;line-height:1.5}
+.g-ask .msg.me{border-radius:16px;padding:10px 14px;max-width:85%}
+.g-ask .msg.ai{background:none;padding:0;max-width:100%;border-radius:0}
+.g-ask .msg.think{color:var(--text-muted)}
+/* input: big rounded box, send as a small round button */
+.g-ask .field{margin:0 12px 12px;padding:10px 10px 10px 16px;border-radius:14px;border-color:var(--line);min-height:56px}
+.g-ask .field:focus-within{border-color:var(--fig-blue)}
+.g-ask .field input{font-size:15px}
+.g-ask .field input:focus-visible{outline:none} /* the field's blue border already shows focus */
+.g-ask .send{width:30px;height:30px}
+.g-ask .send:disabled{background:#E5E5E5;color:#FFFFFF}
+/* while the chat is open, the bottom bar re-centres in the space left of the panel so it isn't covered */
+@media (min-width:760px){
+  .g-bar{transition:left .35s var(--ease)}
+  .g-root.is-asking .g-bar{left:calc((100vw - min(380px,calc(100vw - 24px)) - 24px) / 2)}
+}
+/* the sparkle button shows a ring while the chat is open */
+.g-star[aria-expanded="true"]{box-shadow:0 0 0 2px var(--fig-frame),0 0 0 4px var(--fig-blue)}
+@media (prefers-reduced-motion:reduce){.g-ask,.g-ask.is-open{transition:none}}

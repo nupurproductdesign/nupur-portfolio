@@ -13,7 +13,10 @@ const FALLBACK = "Something went wrong on my side. Try again, or reach me on Lin
 
 // Structure: header bar (name + info | reset + close), a scrolling log, and a welcome state with
 // suggested questions that sits at the bottom until the first question is asked.
-export default function ChatPanel({ open, ref, onClose }: { open: boolean; ref: Ref<HTMLElement>; onClose: () => void }) {
+// `className` sets the outer container: "chatcol" (column on /classic) or "g-ask" (floating panel in the gallery).
+export default function ChatPanel({ open, ref, onClose, className = "chatcol" }: {
+  open: boolean; ref: Ref<HTMLElement>; onClose: () => void; className?: string;
+}) {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [busy, setBusy] = useState(false);
   const [q, setQ] = useState("");
@@ -96,7 +99,7 @@ export default function ChatPanel({ open, ref, onClose }: { open: boolean; ref: 
   const empty = bubbles.length === 0;
 
   return (
-    <section className="chatcol" id="chatcol" aria-label="Ask-Nupur" aria-hidden={!open} inert={!open} ref={ref}>
+    <section className={className} id="chatcol" aria-label="Ask-Nupur" aria-hidden={!open} inert={!open} ref={ref}>
       <div className="view ask">
         <div className="ask-bar">
           <div className="ask-title">

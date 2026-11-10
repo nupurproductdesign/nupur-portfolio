@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import Intro from "./Intro";
 import { AboutWall, FunWall, WorkWall } from "./Walls";
 import { Cursors } from "./Cursors";
+import ChatPanel from "../ChatPanel";
 
 // The gallery is one CSS 3D room: a front wall (Work), a left wall (About) and a right wall (Fun),
 // plus a floor and ceiling. Nothing moves except a "camera": we move/turn the whole room in the opposite
@@ -39,6 +40,9 @@ export default function Gallery() {
   const [note, setNote] = useState(false); // "How this works" card
   const [view, setView] = useState<View>("overview");
   const [focus, setFocus] = useState<number | null>(null); // which frame we stepped up to
+  const [asking, setAsking] = useState(false); // Ask-Nupur floating chat panel
+  const chatRef = useRef<HTMLElement>(null);
+  const sparkRef = useRef<HTMLButtonElement>(null);
   const [vp, setVp] = useState({ w: 1440, h: 900 });
   const [boxes, setBoxes] = useState<Record<Wall, Box[]>>({ work: [], about: [], fun: [] });
   const wallRefs = useRef<Record<Wall, HTMLDivElement | null>>({ work: null, about: null, fun: null });
@@ -126,17 +130,28 @@ export default function Gallery() {
   );
 
   // Esc: close the note, otherwise back to the doorway (same as clicking the empty canvas)
+  // open/close Ask-Nupur; opening focuses the question field, closing hands focus back to the sparkle button
+  const setChat = useCallback((open: boolean) => {
+    setAsking(open);
+    setNote(false);
+    if (open) setTimeout(() => chatRef.current?.querySelector<HTMLInputElement>("#q")?.focus({ preventScroll: true }), 300);
+    else sparkRef.current?.focus({ preventScroll: true });
+  }, []);
+
   const back = useCallback(() => {
+    if (asking) return setChat(false);
     if (note) return setNote(false);
     if (view !== "overview") go("overview");
-  }, [note, view, go]);
+  }, [asking, setChat, note, view, go]);
 
   // keyboard: arrows walk frame to frame, Esc steps back
   useEffect(() => {
     if (phase !== "room") return;
     const on = (e: KeyboardEvent) => {
-      if (e.key === "Escape") back();
-      else if (e.key === "ArrowRight") step(1);
+      if (e.key === "Escape") return back();
+      // typing in the chat: arrow keys move the text cursor, not the camera
+      if ((e.target as Element).closest?.("input, textarea, .g-ask")) return;
+      if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
     };
     addEventListener("keydown", on);
@@ -148,6 +163,7 @@ export default function Gallery() {
     if (phase !== "room") return;
     let lock = 0;
     const on = (e: WheelEvent) => {
+      if ((e.target as Element).closest?.(".g-ask")) return; // scrolling the chat, not the room
       const dv = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
       if (Math.abs(dv) < 12 || Date.now() < lock) return;
       lock = Date.now() + 700;
@@ -178,7 +194,7 @@ export default function Gallery() {
 
   return (
     <div
-      className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}`}
+      className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}${asking ? " is-asking" : ""}`}
       // room sizes for the CSS (app/gallery.css builds the walls, floor and ceiling from these)
       style={{ "--W": `${ROOM.W}px`, "--D": `${ROOM.D}px`, "--H": `${ROOM.H}px` } as CSSProperties}
     >
@@ -219,10 +235,23 @@ export default function Gallery() {
             {LABEL[w]}
           </button>
         ))}
-        {/* Ask Nupur: what this does is still to be decided (Nupur, 2026-11-10) */}
-        <button type="button" className="g-star" aria-label="Ask Nupur" title="Ask Nupur">
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-            <path fill="currentColor" d="M12 2.5l2.6 6.4 6.9.5-5.3 4.4 1.7 6.7L12 16.8l-5.9 3.7 1.7-6.7-5.3-4.4 6.9-.5z" />
+        {/* Ask Nupur: opens the floating chat panel on the right (Nupur, 2026-11-10) */}
+        <button
+          ref={sparkRef}
+          type="button"
+          className="g-star"
+          aria-label="Ask Nupur"
+          title="Ask Nupur"
+          aria-expanded={asking}
+          aria-controls="chatcol"
+          onClick={() => setChat(!asking)}
+        >
+          {/* Nupur's sparkle icon (her file: public/ask-nupur/Subtract.svg), inlined so it takes the button's text colour */}
+          <svg viewBox="0 0 1500 1500" width="16" height="16" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M750 0C750 414.214 1085.79 750 1500 750C1085.79 750 750 1085.79 750 1500C750 1085.79 414.214 750 0 750C414.214 750 750 414.214 750 0Z"
+            />
           </svg>
         </button>
         <span className="g-pager">
@@ -232,6 +261,9 @@ export default function Gallery() {
         </span>
       </nav>
 
+
+      {/* Ask-Nupur: same chat as the classic site (welcome, suggested questions, /api/ask), as a floating panel */}
+      <ChatPanel ref={chatRef} open={asking} onClose={() => setChat(false)} className={`g-ask${asking ? " is-open" : ""}`} />
 
       {/* cursor chat hint only on About and Fun (not Work), Nupur 2026-11-10 */}
       <Cursors hint={view === "about" || view === "fun"} />
