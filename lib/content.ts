@@ -12,8 +12,8 @@ export const LINKS = {
   source: "https://github.com/", // TODO(nupur): this repo's URL once it's on GitHub
 };
 
-// TODO(nupur): the email address to show (with a copy button) under EMAIL.
-export const EMAIL = "";
+// Contact email (Nupur, 2026-11-10): "Say Hi!" in the gallery, the About wall links, the classic site's Email popover.
+export const EMAIL = "nupur.productdesign@gmail.com";
 
 export const EXPERIENCE = [
   { year: "2025", yearSuffix: " - Present", company: "LehLah", role: "Product Designer" },

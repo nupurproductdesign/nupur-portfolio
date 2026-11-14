@@ -9,7 +9,8 @@ export default function CaseStudyPage({ study }: { study: CaseStudy }) {
   return (
     <div className="cs-root">
       <header className="cs-crumb">
-        <Link href="/#room">Nupur Gidhi</Link> {/* back to the room's doorway view, no intro */}
+        {/* "Nupur Gidhi" goes back to the room's doorway view, without the intro */}
+        <Link href="/#room">Nupur Gidhi</Link>
         <span aria-hidden="true">/</span>
         <Link href={back}>Work</Link>
         <span aria-hidden="true">/</span>
@@ -18,7 +19,11 @@ export default function CaseStudyPage({ study }: { study: CaseStudy }) {
 
       <main className="cs-wrap">
         <span className="cs-name">{study.org} / {study.title}</span>
-        <article className="cs-frame">
+        {/* the page is a selected Figma frame: blue outline, corner handles and size tag, like the gallery's frames */}
+        <article className="cs-frame is-sel">
+          <i className="cs-hdl tl" aria-hidden="true" /><i className="cs-hdl tr" aria-hidden="true" />
+          <i className="cs-hdl bl" aria-hidden="true" /><i className="cs-hdl br" aria-hidden="true" />
+          <span className="cs-size" aria-hidden="true">Hug × Hug</span>
           {/* 1. Cover */}
           <section className="cs-cover">
             <span className="cs-status label">{study.status}</span>

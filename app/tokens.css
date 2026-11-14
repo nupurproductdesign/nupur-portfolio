@@ -273,7 +273,7 @@
 
 /* Ask-Nupur chat inside the gallery: light versions of the chat's roles, scoped to the floating panel (2026-11-10,
    styled after the Figma AI chat panel Nupur shared). The classic site's chat column stays dark.
-   Contrast: text 16.7 on white, 14.4 on the #F0F0F0 visitor bubble; muted 6.9 on white; white on #1E1E1E send 16.7. */
+   Contrast: text 16.7 on white, 14.4 on the #F0F0F0 visitor bubble; muted 6.9 on white; white arrow on the blue send button 3.0 (an icon: needs 3:1). */
 .g-root .g-ask {
   --bg: #FFFFFF;
   --surface: #FFFFFF;          /* input field */
@@ -283,7 +283,9 @@
   --text-muted: #5C5C5C;
   --tint: rgba(0, 0, 0, .05);
   --tint-2: rgba(0, 0, 0, .08);
-  --btn-bg: #1E1E1E;  --btn-text: #FFFFFF;  --btn-hover: #3A3A3A;  --btn-active: #000000;
+  /* send button: the gallery's accent blue #0D99FF (Nupur, 2026-11-10); white arrow on it is 3.0:1, fine for an icon */
+  --btn-bg: var(--fig-blue);  --btn-text: #FFFFFF;
+  --btn-hover: color-mix(in srgb, var(--fig-blue) 90%, black);  --btn-active: color-mix(in srgb, var(--fig-blue) 80%, black);
   --bubble-me-bg: #F0F0F0;  --bubble-me-text: #1E1E1E;   /* visitor bubble: grey, like the reference */
   --tip-bg: #FFFFFF;  --tip-text: #1E1E1E;
   --shadow-card: 0 1px 2px rgba(0,0,0,.06), 0 18px 40px -18px rgba(0,0,0,.22);

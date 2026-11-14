@@ -83,7 +83,7 @@
 
 /* ---------- intro: one selected text frame on an empty canvas ---------- */
 /* same dot-grid canvas as the room walls, at screen scale (24px spacing, centred on the screen) */
-.g-intro{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;
+.g-intro{position:fixed;inset:0;z-index:45;display:grid;place-items:center;padding:24px;
   background:radial-gradient(circle,var(--fig-grid) 1px,transparent 1.6px) 50% 50%/24px 24px,var(--fig-canvas);transition:opacity .7s var(--ease)}
 .g-intro.is-leaving{opacity:0;pointer-events:none}
 .g-intro-frame{cursor:default;background:var(--fig-frame);padding:clamp(14px,2vw,24px) clamp(16px,2.4vw,32px);transition:transform .7s var(--ease)}
@@ -98,16 +98,32 @@
 .g-crumb button{font-weight:500;color:var(--fig-text)}
 .g-crumb button:hover{color:var(--fig-blue)}
 
-.g-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:2px;padding:4px;
-  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:10px;box-shadow:var(--fig-shadow)}
+/* the bottom bar and the Ask-Nupur chat are one "dock" (like Figma's toolbar + actions panel): same width, same
+   corners, the chat sitting just above the bar. The bar keeps its natural width (its tabs); Gallery.tsx measures it
+   and passes it to the chat as --bar-w. */
+.g-root{--bar-w:440px;--bar-bottom:20px;--bar-h:46px;--dock-gap:10px;--dock-radius:14px}
+.g-bar{position:fixed;left:50%;bottom:var(--bar-bottom);transform:translateX(-50%);z-index:57;display:flex;align-items:center;gap:2px;padding:4px;
+  height:var(--bar-h);box-sizing:border-box;
+  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:var(--dock-radius);box-shadow:var(--fig-shadow)}
 /* active tab: solid blue fill with white text, as in the reference */
 .g-tab{padding:7px 12px;border-radius:7px;font-size:14px;font-weight:500;color:var(--fig-text);transition:background .15s,color .15s}
 .g-tab:hover{background:var(--fig-tint)}
 /* selected tab: Figma's own blue #0D99FF (Nupur, 2026-11-10). White on it is 3.0:1, below AA for 14px text */
 .g-tab[aria-current="true"]{background:var(--fig-blue);color:var(--fig-on-blue)}
-.g-star{display:grid;place-items:center;width:32px;height:32px;margin:0 2px 0 4px;border-radius:7px;background:var(--fig-btn);color:var(--fig-on-btn);transition:background .2s}
-.g-star:hover{background:var(--fig-btn-hover)}
+/* Ask Nupur: a fourth tab (same look as Work/About/Fun, plus the sparkle); selected (blue) while the chat is open */
+.g-tab-ask{display:inline-flex;align-items:center;gap:6px}
+
+/* Say Hi!: floating button, top right, mirroring the breadcrumb; accent blue #0D99FF fill with white text
+   (Nupur, 2026-11-10; white on it is 3.0:1, below AA for 14px, same accepted trade-off as the selected tab) */
+.g-float{position:fixed;top:14px;right:clamp(16px,2.6vw,28px);z-index:40;display:inline-flex;align-items:center;height:34px;padding:0 14px;
+  border-radius:8px;background:var(--fig-blue);color:var(--fig-on-blue);box-shadow:var(--fig-shadow);
+  font-size:14px;font-weight:500;transition:background .15s}
+.g-float:hover{background:color-mix(in srgb,var(--fig-blue) 90%,black)}
+.g-float[aria-disabled="true"]{cursor:default}
 /* frame counter, always in the bar (greyed in the overview) so the tabs never shift */
+/* hidden during the intro (the bar sits above the intro layer), fades in as the room appears */
+.g-bar{transition:opacity .5s var(--ease)}
+.g-root:not(.is-room) .g-bar{opacity:0;visibility:hidden;pointer-events:none}
 .g-pager{display:flex;align-items:center;gap:0;margin-left:4px;padding-left:6px;border-left:1px solid var(--fig-line)}
 .g-pager .g-count{min-width:40px;text-align:center;font-size:13px;color:var(--fig-muted);font-variant-numeric:tabular-nums}
 .g-pager button{width:28px;height:28px;border-radius:7px;font-size:18px;line-height:1;color:var(--fig-text);transition:background .15s,opacity .15s}
@@ -115,7 +131,9 @@
 .g-pager button:disabled{opacity:.3;cursor:default;background:none}
 
 /* ---------- multiplayer cursors ---------- */
-.g-cursors{position:fixed;inset:0;z-index:70;pointer-events:none}
+/* layers: room < breadcrumb + Say Hi! (40, blurred by the chat) < intro (45) < cursors (50) < chat backdrop (55) < chat (56) < bottom bar (57).
+   The bottom bar sits above the blur so it stays sharp and usable while the chat is open (Nupur, 2026-11-10). */
+.g-cursors{position:fixed;inset:0;z-index:50;pointer-events:none}
 .g-cur{position:absolute;top:0;left:0;display:flex;align-items:flex-start;gap:2px}
 .g-cur span{font-size:12px;font-weight:500;line-height:1;padding:5px 8px;border-radius:4px;white-space:nowrap;color:var(--fig-on-cursor)}
 .g-cur-you{opacity:0;transition:opacity .2s}
@@ -144,14 +162,25 @@
   .g-cur-nupur.is-chat span{animation:none}
 }
 
-/* ---------- Ask-Nupur: floating chat panel on the right (styled after Figma's AI chat panel) ----------
+/* ---------- Ask-Nupur: chat panel centred over a blurred room (styled after Figma's AI chat panel) ----------
    Same component and elements as the classic site's chat (components/ChatPanel.tsx); colours come from the
-   ".g-root .g-ask" block in tokens.css, shapes from here. */
-.g-ask{position:fixed;top:12px;right:12px;bottom:12px;z-index:55;width:min(380px,calc(100vw - 24px));display:flex;flex-direction:column;
-  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.06),0 24px 60px -20px rgba(0,0,0,.28);
+   ".g-root .g-ask" block in tokens.css, shapes from here. Centred + blurred backdrop: Nupur, 2026-11-10. */
+/* docked just above the bottom bar (10px gap), exactly the bar's width, same corners, soft shadow (Nupur 2026-11-10) */
+.g-ask{position:fixed;left:50%;bottom:calc(var(--bar-bottom) + var(--bar-h) + var(--dock-gap));z-index:56;
+  width:var(--bar-w);height:min(640px,calc(100dvh - var(--bar-bottom) - var(--bar-h) - var(--dock-gap) - 24px));
+  display:flex;flex-direction:column;
+  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:var(--dock-radius);
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px -10px rgba(0,0,0,.14);
   overflow:hidden;user-select:text;-webkit-user-select:text;
-  opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .25s var(--ease),transform .35s var(--ease),visibility 0s .35s}
-.g-ask.is-open{opacity:1;visibility:visible;transform:none;transition:opacity .25s var(--ease),transform .35s var(--ease),visibility 0s}
+  /* closed: parked above the screen; it slides down to sit on the bar when opened, and back up when closed */
+  opacity:0;visibility:hidden;transform:translate(-50%,-100dvh);
+  transition:opacity .3s var(--ease),transform .45s cubic-bezier(.4,0,.6,1),visibility 0s .45s}
+.g-ask.is-open{opacity:1;visibility:visible;transform:translate(-50%,0);
+  transition:opacity .3s var(--ease),transform .8s cubic-bezier(.2,.9,.25,1),visibility 0s} /* slide-in: .55s → .8s (Nupur 2026-11-10) */
+/* everything behind the chat (room, bar, cursors) is blurred and softened; clicking it closes the chat */
+.g-ask-backdrop{position:fixed;inset:0;z-index:55;background:rgba(245,245,245,.3);backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility 0s .3s}
+.g-ask-backdrop.is-open{opacity:1;visibility:visible;transition:opacity .3s var(--ease),visibility 0s}
 .g-ask .ask{height:100%;min-height:0;flex:1;font-family:var(--font-sans)}
 /* header: title like "Add dummy values" in the reference, sentence case, icons on the right */
 .g-ask .ask-bar{border-bottom:0;padding:0 8px 0 16px}
@@ -178,6 +207,6 @@
 .g-ask .field input:focus-visible{outline:none} /* the field's blue border already shows focus */
 .g-ask .send{width:30px;height:30px}
 .g-ask .send:disabled{background:#E5E5E5;color:#FFFFFF}
-/* the sparkle button shows a ring while the chat is open */
-.g-star[aria-expanded="true"]{box-shadow:0 0 0 2px var(--fig-frame),0 0 0 4px var(--fig-blue)}
+/* the Ask Nupur tab is selected (blue) while the chat is open */
+.g-tab-ask[aria-expanded="true"]{background:var(--fig-blue);color:var(--fig-on-blue)}
 @media (prefers-reduced-motion:reduce){.g-ask,.g-ask.is-open{transition:none}}

@@ -5,7 +5,7 @@ import Intro from "./Intro";
 import { AboutWall, FunWall, WorkWall } from "./Walls";
 import { Cursors } from "./Cursors";
 import ChatPanel from "../ChatPanel";
-import { CASES } from "@/lib/content";
+import { CASES, EMAIL } from "@/lib/content";
 
 // The gallery is one CSS 3D room: a front wall (Work), a left wall (About) and a right wall (Fun),
 // plus a floor and ceiling. Nothing moves except a "camera": we move/turn the whole room in the opposite
@@ -20,7 +20,7 @@ type Pose = { yaw: number; x: number; y: number; z: number };
 type Box = { cx: number; cy: number; w: number; h: number }; // a frame's centre/size, relative to its wall's centre
 
 const WALLS: Wall[] = ["work", "about", "fun"];
-const LABEL: Record<View, string> = { overview: "Gallery", work: "Work", about: "About", fun: "Fun" };
+const LABEL: Record<View, string> = { overview: "Portfolio", work: "Work", about: "About", fun: "Fun" };
 
 // Eye distance (CSS `perspective`). Bigger = flatter, smaller = more dramatic. Tuned per orientation.
 const perspectiveFor = (w: number, h: number) => (w >= h ? 1.2 * h : 1.5 * w);
@@ -45,6 +45,17 @@ export default function Gallery() {
   const autoPan = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const chatRef = useRef<HTMLElement>(null);
   const sparkRef = useRef<HTMLButtonElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLElement>(null);
+
+  // the chat is exactly as wide as the bottom bar: measure the bar and hand its width to the CSS as --bar-w
+  useLayoutEffect(() => {
+    const bar = barRef.current, root = rootRef.current;
+    if (!bar || !root) return;
+    const ro = new ResizeObserver(() => root.style.setProperty("--bar-w", `${bar.offsetWidth}px`));
+    ro.observe(bar);
+    return () => ro.disconnect();
+  }, []);
   const [vp, setVp] = useState({ w: 1440, h: 900 });
   const [boxes, setBoxes] = useState<Record<Wall, Box[]>>({ work: [], about: [], fun: [] });
   const wallRefs = useRef<Record<Wall, HTMLDivElement | null>>({ work: null, about: null, fun: null });
@@ -116,9 +127,11 @@ export default function Gallery() {
   // ----- navigation -----
   // opening a wall (tab or click) steps straight up to its first frame; the doorway view has no focus
   // any move the visitor makes cancels the opening auto-pan and goes back to the normal camera speed
+  // (it also closes the chat, e.g. a tab clicked in the bottom bar while chatting, so the visitor sees where they went)
   const userMoved = useCallback(() => {
     clearTimeout(autoPan.current);
     setSlow(false);
+    setAsking(false);
   }, []);
 
   const go = useCallback((v: View) => {
@@ -224,6 +237,7 @@ export default function Gallery() {
 
   return (
     <div
+      ref={rootRef}
       className={`g-root${phase === "room" ? " is-room" : ""}${view === "overview" ? " is-overview" : " is-wall"}`}
       // room sizes for the CSS (app/gallery.css builds the walls, floor and ceiling from these)
       style={{ "--W": `${ROOM.W}px`, "--D": `${ROOM.D}px`, "--H": `${ROOM.H}px` } as CSSProperties}
@@ -256,30 +270,41 @@ export default function Gallery() {
         <span>{LABEL[view]}</span>
       </header>
 
-      <nav className="g-bar" aria-label="Gallery walls">
+      {/* Say Hi!: quiet white floating button top right, opens an email to Nupur (EMAIL in lib/content.ts).
+          If EMAIL is ever emptied it links nowhere and says so. */}
+      <a
+        className="g-float"
+        href={EMAIL ? `mailto:${EMAIL}` : undefined}
+        aria-disabled={!EMAIL}
+        title={EMAIL ? `Email ${EMAIL}` : "Email address coming soon"}
+      >
+        Say Hi!
+      </a>
+
+      <nav className="g-bar" aria-label="Gallery walls" ref={barRef}>
         {WALLS.map((w) => (
-          <button key={w} type="button" className="g-tab" aria-current={view === w} onClick={() => go(w)}>
+          // while the chat is open, only the Ask Nupur tab shows as selected
+          <button key={w} type="button" className="g-tab" aria-current={!asking && view === w} onClick={() => go(w)}>
             {LABEL[w]}
           </button>
         ))}
-        {/* Ask Nupur: opens the floating chat panel on the right (Nupur, 2026-11-10) */}
+        {/* Ask Nupur: a fourth tab that opens the chat; selected while the chat is open (Nupur 2026-11-10) */}
         <button
           ref={sparkRef}
           type="button"
-          className="g-star"
-          aria-label="Ask Nupur"
-          title="Ask Nupur"
+          className="g-tab g-tab-ask"
           aria-expanded={asking}
           aria-controls="chatcol"
           onClick={() => setChat(!asking)}
         >
-          {/* Nupur's sparkle icon (her file: public/ask-nupur/Subtract.svg), inlined so it takes the button's text colour */}
-          <svg viewBox="0 0 1500 1500" width="16" height="16" aria-hidden="true">
+          {/* Nupur's sparkle icon (her file: public/ask-nupur/Subtract.svg), inlined so it takes the text colour */}
+          <svg viewBox="0 0 1500 1500" width="14" height="14" aria-hidden="true">
             <path
               fill="currentColor"
               d="M750 0C750 414.214 1085.79 750 1500 750C1085.79 750 750 1085.79 750 1500C750 1085.79 414.214 750 0 750C414.214 750 750 414.214 750 0Z"
             />
           </svg>
+          Ask Nupur
         </button>
         <span className="g-pager">
           <button type="button" aria-label="Previous frame" onClick={() => step(-1)} disabled={!count || focus === 0}>‹</button>
@@ -289,7 +314,9 @@ export default function Gallery() {
       </nav>
 
 
-      {/* Ask-Nupur: same chat as the classic site (welcome, suggested questions, /api/ask), as a floating panel */}
+      {/* Ask-Nupur: same chat as the classic site (welcome, suggested questions, /api/ask), centred over a blurred room */}
+      {/* blurred backdrop behind the centred chat; clicking it closes the chat */}
+      <div className={`g-ask-backdrop${asking ? " is-open" : ""}`} aria-hidden="true" onClick={() => setChat(false)} />
       <ChatPanel ref={chatRef} open={asking} onClose={() => setChat(false)} className={`g-ask${asking ? " is-open" : ""}`} />
 
       {/* cursor chat hint only on About and Fun (not Work), Nupur 2026-11-10 */}
