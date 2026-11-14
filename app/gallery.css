@@ -1,35 +1,45 @@
 /* GALLERY (homepage /): the portfolio as one CSS 3D room, drawn like a light Figma file (matches the reference video).
    Colours only via the --fig-* tokens (app/tokens.css, "GALLERY" block, scoped to .g-root). Font: Geist only.
-   Room sizes must match ROOM in components/gallery/Gallery.tsx: W (front wall) 2400 · D (side walls) 2400 · H 1000. */
+   Room sizes come from ROOM in components/gallery/Gallery.tsx as --W (front wall width), --D (depth = side wall length)
+   and --H (height), set on .g-root. Change them there, not here. */
 
 .g-root{position:fixed;inset:0;overflow:hidden;background:var(--fig-canvas);color:var(--fig-text);font-family:var(--font-sans);user-select:none;-webkit-user-select:none}
-.g-root ::selection{background:var(--fig-blue-ink);color:var(--fig-on-blue)}
-.g-root :focus-visible{outline:2px solid var(--fig-blue-ink);outline-offset:3px}
+.g-root ::selection{background:var(--fig-blue);color:var(--fig-on-blue)}
+.g-root :focus-visible{outline:2px solid var(--fig-blue);outline-offset:3px}
 
 /* ---------- the room ---------- */
 .g-stage{position:absolute;inset:0;perspective-origin:50% 50%;overflow:hidden}
 /* the world sits at the centre of the screen; Gallery.tsx moves/turns it as the "camera" */
 .g-world{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
 .g-world.is-moving{transition:transform 1.25s cubic-bezier(.65,0,.25,1)}
+/* the opening auto-pan to the Work wall: slower and gentler than a tab click */
+.g-world.is-moving.is-slow{transition:transform 3.2s cubic-bezier(.45,0,.2,1)}
 
 /* Every surface is the same Figma dot-grid canvas: the room is only felt through perspective, as the rows of dots
-   bend at the corners. 40px spacing divides every surface (2400 × 1000 walls, 2400 × 2400 floor/ceiling), so the
-   rows line up across corners. Dots are 2px across so they survive being shrunk on the far wall. */
+   bend at the corners. 40px spacing divides every room size (keep W, D, H multiples of 40), so the rows line up
+   across corners. Dots are 2px across so they survive being shrunk on the far wall. */
 .g-wall,.g-floor,.g-ceiling{position:absolute;backface-visibility:hidden;
   background:radial-gradient(circle,var(--fig-grid) 1px,transparent 1.6px) 0 0/40px 40px,var(--fig-canvas)}
-.g-wall{top:-500px;left:-1200px;width:2400px;height:1000px}
-.g-wall-about{transform:translateZ(-1200px)}
-.g-wall-work{transform:translateX(-1200px) rotateY(90deg)}  /* faces into the room from the left */
-.g-wall-fun{transform:translateX(1200px) rotateY(-90deg)}   /* faces into the room from the right */
-.g-floor{left:-1200px;top:-1200px;width:2400px;height:2400px;transform:translateY(500px) rotateX(90deg)}
-.g-ceiling{left:-1200px;top:-1200px;width:2400px;height:2400px;transform:translateY(-500px) rotateX(-90deg)}
+/* --len = the wall's own length: the front wall is W wide, the side walls run the room's depth D */
+.g-wall{--len:var(--D);top:calc(var(--H) / -2);left:calc(var(--len) / -2);width:var(--len);height:var(--H)}
+.g-wall-work{--len:var(--W);transform:translateZ(calc(var(--D) / -2))}                 /* Work: straight ahead */
+.g-wall-about{transform:translateX(calc(var(--W) / -2)) rotateY(90deg)} /* About: faces into the room from the left */
+.g-wall-fun{transform:translateX(calc(var(--W) / 2)) rotateY(-90deg)}   /* Fun: faces into the room from the right */
+.g-floor,.g-ceiling{left:calc(var(--W) / -2);top:calc(var(--D) / -2);width:var(--W);height:var(--D)}
+.g-floor{transform:translateY(calc(var(--H) / 2)) rotateX(90deg)}
+.g-ceiling{transform:translateY(calc(var(--H) / -2)) rotateX(-90deg)}
 
 /* a wall reads as a Figma section: name top-left; from elsewhere in the room it's one big click target */
 .g-section{position:absolute;top:30px;left:44px;font-size:16px;font-weight:500;color:var(--fig-muted)}
-.g-wall:not(.is-active){cursor:pointer}
-.g-wall:not(.is-active):hover{outline:3px solid var(--fig-blue);outline-offset:-3px}
+/* from the doorway, walls are click targets; facing a wall, the empty canvas zooms you back out */
+.g-root.is-overview .g-wall{cursor:pointer}
+.g-root.is-overview .g-wall:hover{outline:3px solid var(--fig-blue);outline-offset:-3px}
+.g-root.is-wall .g-stage{cursor:zoom-out}
 .g-row,.g-row-inner{display:flex;align-items:center;justify-content:center;gap:56px}
 .g-row{position:absolute;inset:0;padding:40px 110px 0}
+/* side walls: spread the frames along the whole wall, so the nearest ones sit close to you at the screen edges
+   instead of leaving the near half of the wall empty */
+.g-wall-about .g-row,.g-wall-fun .g-row{justify-content:space-evenly;padding-inline:160px}
 .g-row-inner{display:contents}
 
 /* ---------- Figma frame ---------- */
@@ -37,19 +47,19 @@
 .g-frame:hover{outline-color:var(--fig-blue)}
 .g-frame.is-sel,.g-root .g-frame:focus-visible{outline:1.5px solid var(--fig-blue);outline-offset:0;cursor:default}
 .g-name{position:absolute;bottom:100%;left:0;max-width:100%;margin-bottom:8px;font-size:13px;line-height:1.2;color:var(--fig-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.g-frame.is-sel .g-name,.g-frame:hover .g-name{color:var(--fig-blue-ink)}
+.g-frame.is-sel .g-name,.g-frame:hover .g-name{color:var(--fig-blue)}
 /* Figma handles: white squares with a blue border */
 .g-hdl{display:none;position:absolute;width:8px;height:8px;background:#fff;border:1.5px solid var(--fig-blue)}
 .g-hdl.tl{top:-4.5px;left:-4.5px}.g-hdl.tr{top:-4.5px;right:-4.5px}.g-hdl.bl{bottom:-4.5px;left:-4.5px}.g-hdl.br{bottom:-4.5px;right:-4.5px}
 .g-size{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:10px;white-space:nowrap;
-  font-size:11px;font-weight:500;line-height:1;padding:4px 6px;border-radius:3px;background:var(--fig-blue-ink);color:var(--fig-on-blue)}
+  font-size:11px;font-weight:500;line-height:1;padding:4px 6px;border-radius:3px;background:var(--fig-blue);color:var(--fig-on-blue)}
 .g-frame.is-sel .g-hdl,.g-frame.is-sel .g-size{display:block}
 
 /* frame contents: white artboards on the About and Fun walls */
 .g-card{width:360px;padding:36px;background:var(--fig-frame);color:var(--fig-text);border-radius:4px;box-shadow:var(--fig-shadow)}
 .g-card .eyebrow{display:block;margin-bottom:16px;font-size:11px;color:var(--fig-muted)}
 .g-card h2{font-family:var(--font-sans);font-weight:500;font-size:34px;line-height:1.15;letter-spacing:-.03em;margin:0;text-wrap:balance}
-.g-card h2 em{color:var(--fig-blue-ink);font-style:normal}
+.g-card h2 em{color:var(--fig-blue);font-style:normal}
 .g-card p{color:var(--fig-muted);font-size:16px;line-height:1.55;margin:18px 0 0}
 .g-w-statement{width:660px}
 .g-w-exp{width:420px}
@@ -62,7 +72,7 @@
 .g-list dd span{display:block;color:var(--fig-muted);font-size:14px}
 .g-links{list-style:none;margin:0;padding:0;display:grid;gap:14px;font-size:16px}
 .g-links a{border-bottom:1px solid currentColor;transition:color .2s}
-.g-links a:hover{color:var(--fig-blue-ink)}
+.g-links a:hover{color:var(--fig-blue)}
 .g-links .muted{color:var(--fig-muted)}
 /* Work: case tiles on white artboards; their light colours come from the .g-case block in tokens.css */
 .g-case{width:500px;padding:20px 20px 12px;background:var(--fig-frame);border-radius:4px;box-shadow:var(--fig-shadow)}
@@ -73,7 +83,7 @@
 
 /* ---------- intro: one selected text frame on an empty canvas ---------- */
 /* same dot-grid canvas as the room walls, at screen scale (24px spacing, centred on the screen) */
-.g-intro{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;
+.g-intro{position:fixed;inset:0;z-index:45;display:grid;place-items:center;padding:24px;
   background:radial-gradient(circle,var(--fig-grid) 1px,transparent 1.6px) 50% 50%/24px 24px,var(--fig-canvas);transition:opacity .7s var(--ease)}
 .g-intro.is-leaving{opacity:0;pointer-events:none}
 .g-intro-frame{cursor:default;background:var(--fig-frame);padding:clamp(14px,2vw,24px) clamp(16px,2.4vw,32px);transition:transform .7s var(--ease)}
@@ -86,57 +96,58 @@
 /* ---------- chrome: breadcrumb, bottom bar ---------- */
 .g-crumb{position:fixed;top:20px;left:clamp(16px,2.6vw,28px);z-index:40;display:flex;gap:6px;align-items:center;font-size:14px;color:var(--fig-muted)}
 .g-crumb button{font-weight:500;color:var(--fig-text)}
-.g-crumb button:hover{color:var(--fig-blue-ink)}
+.g-crumb button:hover{color:var(--fig-blue)}
 
-.g-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:2px;padding:4px;
-  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:10px;box-shadow:var(--fig-shadow)}
+/* the bottom bar and the Ask-Nupur chat are one "dock" (like Figma's toolbar + actions panel): same width, same
+   corners, the chat sitting just above the bar. The bar keeps its natural width (its tabs); Gallery.tsx measures it
+   and passes it to the chat as --bar-w. */
+.g-root{--bar-w:440px;--bar-bottom:20px;--bar-h:46px;--dock-gap:10px;--dock-radius:14px}
+.g-bar{position:fixed;left:50%;bottom:var(--bar-bottom);transform:translateX(-50%);z-index:57;display:flex;align-items:center;gap:2px;padding:4px;
+  height:var(--bar-h);box-sizing:border-box;
+  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:var(--dock-radius);box-shadow:var(--fig-shadow)}
 /* active tab: solid blue fill with white text, as in the reference */
 .g-tab{padding:7px 12px;border-radius:7px;font-size:14px;font-weight:500;color:var(--fig-text);transition:background .15s,color .15s}
 .g-tab:hover{background:var(--fig-tint)}
-.g-tab[aria-current="true"]{background:var(--fig-blue-ink);color:var(--fig-on-blue)}
-.g-star{display:grid;place-items:center;width:32px;height:32px;margin:0 2px 0 4px;border-radius:7px;background:var(--fig-btn);color:var(--fig-on-btn);transition:background .2s}
-.g-star:hover{background:var(--fig-btn-hover)}
+/* selected tab: Figma's own blue #0D99FF (Nupur, 2026-11-10). White on it is 3.0:1, below AA for 14px text */
+.g-tab[aria-current="true"]{background:var(--fig-blue);color:var(--fig-on-blue)}
+/* Ask Nupur: a fourth tab (same look as Work/About/Fun, plus the sparkle); selected (blue) while the chat is open */
+.g-tab-ask{display:inline-flex;align-items:center;gap:6px}
+
+/* Say Hi!: floating button, top right, mirroring the breadcrumb; accent blue #0D99FF fill with white text
+   (Nupur, 2026-11-10; white on it is 3.0:1, below AA for 14px, same accepted trade-off as the selected tab) */
+.g-float{position:fixed;top:14px;right:clamp(16px,2.6vw,28px);z-index:40;display:inline-flex;align-items:center;height:34px;padding:0 14px;
+  border-radius:8px;background:var(--fig-blue);color:var(--fig-on-blue);box-shadow:var(--fig-shadow);
+  font-size:14px;font-weight:500;transition:background .15s}
+.g-float:hover{background:color-mix(in srgb,var(--fig-blue) 90%,black)}
+.g-float[aria-disabled="true"]{cursor:default}
 /* frame counter, always in the bar (greyed in the overview) so the tabs never shift */
+/* hidden during the intro (the bar sits above the intro layer), fades in as the room appears */
+.g-bar{transition:opacity .5s var(--ease)}
+.g-root:not(.is-room) .g-bar{opacity:0;visibility:hidden;pointer-events:none}
 .g-pager{display:flex;align-items:center;gap:0;margin-left:4px;padding-left:6px;border-left:1px solid var(--fig-line)}
 .g-pager .g-count{min-width:40px;text-align:center;font-size:13px;color:var(--fig-muted);font-variant-numeric:tabular-nums}
 .g-pager button{width:28px;height:28px;border-radius:7px;font-size:18px;line-height:1;color:var(--fig-text);transition:background .15s,opacity .15s}
 .g-pager button:hover{background:var(--fig-tint)}
 .g-pager button:disabled{opacity:.3;cursor:default;background:none}
 
-/* ---------- "How this works" card in an envelope ---------- */
-.g-note-wrap{position:fixed;inset:0;z-index:45;display:grid;place-items:center;pointer-events:none;padding:16px 16px 90px}
-.g-envelope{position:relative;width:min(400px,100%);pointer-events:auto;animation:g-rise .6s var(--ease) both}
-@keyframes g-rise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
-.g-note{position:relative;z-index:1;margin:0 18px;padding:28px 28px 70px;background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:16px;transform:rotate(-2deg);box-shadow:var(--fig-shadow)}
-.g-note h2{font-family:var(--font-sans);font-weight:600;font-size:24px;line-height:1.15;letter-spacing:-.03em;margin:0 0 14px}
-.g-note p{margin:0 0 10px;font-size:16px;line-height:1.45;color:var(--fig-muted)}
-.g-note b{color:var(--fig-text);font-weight:600}
-.g-sign{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:18px;color:var(--fig-blue)}
-.g-sign > span{display:grid;font-size:15px;color:var(--fig-text)}
-.g-sign > span span{font-size:13px;color:var(--fig-muted)}
-/* the envelope pocket: a V cut over the bottom of the card */
-.g-pocket{position:relative;z-index:2;height:120px;margin-top:-88px;background:#F0F0F0;border:1px solid var(--fig-line);border-radius:4px 4px 16px 16px;
-  clip-path:polygon(0 0,50% 42%,100% 0,100% 100%,0 100%);box-shadow:var(--fig-shadow)}
-.g-gotit{position:absolute;z-index:3;left:50%;bottom:26px;transform:translateX(-50%);padding:8px 16px;border-radius:8px;font-size:14px;font-weight:500;
-  background:var(--fig-btn);color:var(--fig-on-btn);transition:background .2s}
-.g-gotit:hover{background:var(--fig-btn-hover)}
-
 /* ---------- multiplayer cursors ---------- */
-.g-cursors{position:fixed;inset:0;z-index:70;pointer-events:none}
+/* layers: room < breadcrumb + Say Hi! (40, blurred by the chat) < intro (45) < cursors (50) < chat backdrop (55) < chat (56) < bottom bar (57).
+   The bottom bar sits above the blur so it stays sharp and usable while the chat is open (Nupur, 2026-11-10). */
+.g-cursors{position:fixed;inset:0;z-index:50;pointer-events:none}
 .g-cur{position:absolute;top:0;left:0;display:flex;align-items:flex-start;gap:2px}
 .g-cur span{font-size:12px;font-weight:500;line-height:1;padding:5px 8px;border-radius:4px;white-space:nowrap;color:var(--fig-on-cursor)}
 .g-cur-you{opacity:0;transition:opacity .2s}
 .g-cur-you span{background:var(--fig-cursor-you)}
-.g-cur-nupur{color:var(--fig-cursor-nupur);animation:g-wander 26s ease-in-out infinite alternate}
+/* Nupur: parked at the selected frame's bottom-right corner (Cursors.tsx moves it every frame; no wandering) */
+.g-cur-nupur{color:var(--fig-cursor-nupur);opacity:0;transition:opacity .3s}
 .g-cur-nupur span{margin-top:12px;background:var(--fig-cursor-nupur)}
-@keyframes g-wander{
-  0%{transform:translate(62vw,64vh)}
-  20%{transform:translate(70vw,38vh)}
-  40%{transform:translate(28vw,30vh)}
-  60%{transform:translate(20vw,58vh)}
-  80%{transform:translate(48vw,70vh)}
-  100%{transform:translate(78vw,52vh)}
-}
+/* near the right edge the tag/bubble opens to the left of her arrow */
+.g-cur-nupur[data-flip] span{transform:translateX(calc(-100% - 18px))}
+/* cursor chat (Figma's "/" chat bubble): Nupur's tag grows into a message bubble, square corner at her arrow */
+.g-cur-nupur.is-chat span{max-width:240px;white-space:normal;font-size:14px;line-height:1.35;padding:8px 12px;border-radius:2px 14px 14px 14px;
+  box-shadow:var(--fig-shadow);animation:g-chat-in .25s var(--ease) both}
+.g-cur-nupur[data-flip].is-chat span{border-radius:14px 2px 14px 14px;animation:none}
+@keyframes g-chat-in{from{opacity:0;transform:scale(.85);transform-origin:0 0}to{opacity:1;transform:none}}
 
 /* ---------- small screens ---------- */
 @media (max-width:520px){
@@ -146,7 +157,56 @@
 }
 
 @media (prefers-reduced-motion:reduce){
-  .g-world.is-moving{transition:none}
-  .g-cur-nupur{animation:none;transform:translate(70vw,30vh)}
+  .g-world.is-moving,.g-world.is-moving.is-slow{transition:none}
   .g-caret{animation:none}
+  .g-cur-nupur.is-chat span{animation:none}
 }
+
+/* ---------- Ask-Nupur: chat panel centred over a blurred room (styled after Figma's AI chat panel) ----------
+   Same component and elements as the classic site's chat (components/ChatPanel.tsx); colours come from the
+   ".g-root .g-ask" block in tokens.css, shapes from here. Centred + blurred backdrop: Nupur, 2026-11-10. */
+/* docked just above the bottom bar (10px gap), exactly the bar's width, same corners, soft shadow (Nupur 2026-11-10) */
+.g-ask{position:fixed;left:50%;bottom:calc(var(--bar-bottom) + var(--bar-h) + var(--dock-gap));z-index:56;
+  width:var(--bar-w);height:min(640px,calc(100dvh - var(--bar-bottom) - var(--bar-h) - var(--dock-gap) - 24px));
+  display:flex;flex-direction:column;
+  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:var(--dock-radius);
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px -10px rgba(0,0,0,.14);
+  overflow:hidden;user-select:text;-webkit-user-select:text;
+  /* closed: parked above the screen; it slides down to sit on the bar when opened, and back up when closed */
+  opacity:0;visibility:hidden;transform:translate(-50%,-100dvh);
+  transition:opacity .3s var(--ease),transform .45s cubic-bezier(.4,0,.6,1),visibility 0s .45s}
+.g-ask.is-open{opacity:1;visibility:visible;transform:translate(-50%,0);
+  transition:opacity .3s var(--ease),transform .8s cubic-bezier(.2,.9,.25,1),visibility 0s} /* slide-in: .55s → .8s (Nupur 2026-11-10) */
+/* everything behind the chat (room, bar, cursors) is blurred and softened; clicking it closes the chat */
+.g-ask-backdrop{position:fixed;inset:0;z-index:55;background:rgba(245,245,245,.3);backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility 0s .3s}
+.g-ask-backdrop.is-open{opacity:1;visibility:visible;transition:opacity .3s var(--ease),visibility 0s}
+.g-ask .ask{height:100%;min-height:0;flex:1;font-family:var(--font-sans)}
+/* header: title like "Add dummy values" in the reference, sentence case, icons on the right */
+.g-ask .ask-bar{border-bottom:0;padding:0 8px 0 16px}
+.g-ask .ask-title .label{font-size:15px;font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--text)}
+.g-ask .icon-btn{width:30px;height:30px;border-radius:6px}
+.g-ask .info-btn{border-radius:6px}
+.g-ask .tip{box-shadow:var(--shadow-card)}
+/* welcome + suggested questions */
+.g-ask .welcome h2{font-family:var(--font-sans);font-weight:600;font-size:22px;letter-spacing:-.025em}
+.g-ask .welcome p{font-size:14px}
+.g-ask .chips{gap:6px;margin-top:16px}
+.g-ask .chip{border:0;background:var(--surface-2);color:var(--text);border-radius:12px;padding:8px 12px;font-size:14px}
+.g-ask .chip:hover{background:#E6E6E6;color:var(--text)}
+/* messages: visitor = grey rounded bubble on the right; Ask-Nupur = plain text, no bubble (like the reference) */
+.g-ask .log{gap:18px;padding:8px 16px 16px}
+.g-ask .msg{font-size:15px;line-height:1.5}
+.g-ask .msg.me{border-radius:16px;padding:10px 14px;max-width:85%}
+.g-ask .msg.ai{background:none;padding:0;max-width:100%;border-radius:0}
+.g-ask .msg.think{color:var(--text-muted)}
+/* input: big rounded box, send as a small round button */
+.g-ask .field{margin:0 12px 12px;padding:10px 10px 10px 16px;border-radius:14px;border-color:var(--line);min-height:56px}
+.g-ask .field:focus-within{border-color:var(--fig-blue)}
+.g-ask .field input{font-size:15px}
+.g-ask .field input:focus-visible{outline:none} /* the field's blue border already shows focus */
+.g-ask .send{width:30px;height:30px}
+.g-ask .send:disabled{background:#E5E5E5;color:#FFFFFF}
+/* the Ask Nupur tab is selected (blue) while the chat is open */
+.g-tab-ask[aria-expanded="true"]{background:var(--fig-blue);color:var(--fig-on-blue)}
+@media (prefers-reduced-motion:reduce){.g-ask,.g-ask.is-open{transition:none}}

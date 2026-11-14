@@ -1,0 +1,59 @@
+/* CASE STUDY PAGES (/work/<slug>): the gallery's light Figma dot-grid canvas with one 80vw frame that reads like a
+   page and scrolls with the window. Colours only via the --fig-* tokens (tokens.css, shared with .g-root). */
+
+.cs-root{min-height:100vh;min-height:100dvh;color:var(--fig-text);font-family:var(--font-sans);
+  /* same dot grid as the gallery intro; fixed, so the frame scrolls over a still canvas */
+  background:radial-gradient(circle,var(--fig-grid) 1px,transparent 1.6px) 50% 0/24px 24px fixed,var(--fig-canvas)}
+.cs-root ::selection{background:var(--fig-blue);color:var(--fig-on-blue)}
+.cs-root :focus-visible{outline:2px solid var(--fig-blue);outline-offset:3px}
+
+/* breadcrumb, same spot and style as the gallery's; scrolls away with the page so it never sits on the frame */
+.cs-crumb{position:absolute;top:20px;left:clamp(16px,2.6vw,28px);z-index:10;display:flex;gap:6px;align-items:center;font-size:14px;color:var(--fig-muted)}
+.cs-crumb a:first-child{font-weight:500;color:var(--fig-text)}
+.cs-crumb a:hover{color:var(--fig-blue)}
+.cs-here{color:var(--fig-text)}
+
+/* the frame: 80vw wide, Figma frame name above it */
+.cs-wrap{width:80vw;margin:0 auto;padding:88px 0 140px}
+.cs-name{display:block;margin-bottom:8px;font-size:13px;color:var(--fig-blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-frame{position:relative;background:var(--fig-frame);border-radius:4px;box-shadow:var(--fig-shadow);padding:clamp(24px,5vw,80px)}
+/* selected, Figma-style (same as the gallery's selected frames): blue outline, white square handles, blue name,
+   blue size tag centred under the frame */
+.cs-frame.is-sel{border-radius:0;outline:1.5px solid var(--fig-blue)}
+
+.cs-hdl{position:absolute;width:8px;height:8px;background:#fff;border:1.5px solid var(--fig-blue)}
+.cs-hdl.tl{top:-4.5px;left:-4.5px}.cs-hdl.tr{top:-4.5px;right:-4.5px}.cs-hdl.bl{bottom:-4.5px;left:-4.5px}.cs-hdl.br{bottom:-4.5px;right:-4.5px}
+.cs-size{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:10px;white-space:nowrap;
+  font-size:11px;font-weight:500;line-height:1;padding:4px 6px;border-radius:3px;background:var(--fig-blue);color:var(--fig-on-blue)}
+
+/* sections */
+.cs-cover h1{font-family:var(--font-sans);font-weight:500;font-size:clamp(32px,4.4vw,64px);line-height:1.08;letter-spacing:-.04em;margin:16px 0 0;max-width:16em;text-wrap:balance}
+.cs-status{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;padding:6px 10px;border-radius:999px;background:var(--fig-canvas);color:var(--fig-text)}
+.cs-status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--fig-blue)}
+.cs-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:48px;padding-top:24px;border-top:1px solid var(--fig-line)}
+.cs-meta > div{display:grid;gap:6px}
+.cs-meta .label{font-size:11px;color:var(--fig-muted)}
+.cs-tbd{color:var(--fig-muted);font-size:15px}
+.cs-section{margin-top:72px}
+.cs-section h2{font-size:11px;color:var(--fig-muted);margin:0 0 16px}
+.cs-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.cs-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.cs-moment{display:grid;gap:12px;margin-bottom:32px}
+
+/* placeholders: dashed boxes with their name, so the page shows its structure before content exists */
+.cs-ph{display:grid;place-items:center;border:1.5px dashed var(--fig-grid);border-radius:6px;background:var(--fig-canvas);color:var(--fig-muted);font-size:13px}
+.cs-ph-line{height:44px;margin-top:20px;max-width:640px;place-items:center start;padding-left:16px}
+.cs-ph-text{height:140px;max-width:760px}
+.cs-ph-hero{aspect-ratio:16/9;margin-top:40px}
+.cs-ph-image{aspect-ratio:4/3}
+.cs-ph-stat{height:120px}
+
+/* back link, as a pill where the gallery's bottom bar sits */
+.cs-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:10;padding:4px;background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:10px;box-shadow:var(--fig-shadow)}
+.cs-bar a{display:block;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:500;color:var(--fig-text);transition:background .15s}
+.cs-bar a:hover{background:var(--fig-tint)}
+
+@media (max-width:760px){
+  .cs-wrap{width:calc(100vw - 32px)}
+  .cs-meta,.cs-stats,.cs-two{grid-template-columns:1fr 1fr}
+}

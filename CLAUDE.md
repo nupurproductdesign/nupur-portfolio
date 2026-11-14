@@ -95,7 +95,22 @@ The rail is the same near-black as the page with a thin divider. History: ivory/
 3. Luna Design System, and teaching it to AI — LUNA • ONGOING
 4. Agency workspaces: many brands, one login — LUNA • IN PROGRESS
 
-Tiles use illustrative CSS mock screens until real screenshots arrive. All tiles currently link to `#work`.
+Tiles use illustrative CSS mock screens until real screenshots arrive. Case 1 links to its page
+`/work/campaign-management`; the others still link to `#work` (give a case a `slug` + `href` in `lib/content.ts` to
+give it a page).
+
+### Case study pages (`/work/<slug>`, started 2026-11-10, blank shell)
+- `app/work/[slug]/page.tsx` → `components/case-study/CaseStudyPage.tsx`, styles in `app/case-study.css`.
+- Same light dot-grid canvas as the gallery (`.cs-root` shares the `--fig-*` tokens). One white **80vw frame** with
+  its Figma frame name above ("LehLah / A campaign management system…"), shown **selected** (blue `#0D99FF` outline,
+  white corner handles, blue name, "Hug × Hug" tag at the bottom; Nupur 2026-11-10), that reads like a page and scrolls with the
+  window; breadcrumb top-left (scrolls away); fixed "← Back to Work" pill at the bottom.
+- Sections = the template below, as **labelled dashed placeholders** (hook, hero, Role/Timeline/Team/Tools, 3 impact
+  stats, context, 2 final screens, 3 design moments with captions, reflections). Only title, org and status are real.
+- In the gallery, the first click on a case frame steps up to it; clicking the selected tile opens its page.
+  "Back to Work" goes to `/#work/<slug>`: the gallery skips the intro and opens on that case's frame, then cleans the
+  URL back to `/`. "Nupur Gidhi" in the breadcrumb goes to `/#room`: the room's doorway view, no intro, no auto-pan
+  (same as clicking "Nupur Gidhi" inside the gallery).
 
 ### Case study page template (next to build, starting with #1)
 1. Cover: title, one-line hook, hero visual · 2. Meta: role, timeline, team, tools · 3. Impact: 2–4 stat callouts,
@@ -140,8 +155,7 @@ Principle: visuals carry the weight, copy only captions them. No long paragraphs
 - [ ] Impact numbers
 - [ ] Resume PDF → `/public/resume.pdf`, then set `RESUME_URL = "/resume.pdf"` in `lib/content.ts`
 - [ ] LinkedIn, X, GitHub URLs and this repo's URL → `LINKS` in `lib/content.ts`
-- [ ] Email address → `EMAIL` in `lib/content.ts` (EMAIL shows the address with a copy button; built, shows
-      "coming soon" until set)
+- [x] Email address → `EMAIL` in `lib/content.ts`: nupur.productdesign@gmail.com (2026-11-10)
 - [ ] Photos of paintings, origami and real book titles for the Fun desk (`Desk.tsx`)
 - [ ] Final status for case studies 3 and 4
 
@@ -195,20 +209,50 @@ site below, kept unchanged so it can be compared or reused (Nupur's choice; dele
 - **Look (2026-11-10, Nupur: "forget the old theme, same as the video, like I'm in a Figma file"):** the gallery
   does NOT follow VISUAL-IDENTITY.md. Light Figma canvas: walls, floor and ceiling are all the same `#F5F5F5` canvas with a 40px
   `--fig-grid` dot grid, like Figma's canvas (the room is felt only through perspective, no floorboards/beams), white frames, `#1E1E1E`
-  text, Geist only (no Funnel Display, no butter post-it). Figma blue `#0D99FF` for outlines/handles only (fails AA
-  behind text); `#0A6DC2` for anything with text (active tab fill, size tag, selected frame name, 5.3:1 with white).
+  text, Geist only (no Funnel Display, no butter post-it). **One accent: Figma blue `#0D99FF`** for everything blue (selection outline/handles,
+  selected tab, "Hug × Hug" tag, frame names, emphasis words, links, focus ring), Nupur's call 2026-11-10. White on it
+  and it on white are ~3.0:1, below AA for small text; the deeper `#0A6DC2` that passed was dropped.
   Cursors: orange "You" `#C2410C`, purple "Nupur" `#8A3FFC`. Tokens: `--fig-*` block scoped to `.g-root` at the end
   of `app/tokens.css`. Case tiles are light too (white artboard, `#F5F5F5` tile, dark-ink pills), via a
   `.g-root .g-case` token block in `app/tokens.css`; tiles on `/classic` stay dark. `/classic` keeps the dark butter theme.
 - **Flow:** intro canvas with one selected Figma text frame; the headline types itself in black, then the camera pulls
-  back into the room and a "How this works" card in an envelope appears (black "Got it").
-- **Room:** CSS 3D, one "camera" (`components/gallery/Gallery.tsx`). Left wall = **Work** (case tiles), front wall =
-  **About** (statement, quick facts, experience, links), right wall = **Fun** (paintings, nightstand, crane). Sizes in
-  `ROOM` must match `app/gallery/gallery.css`.
-- **Bottom bar** (white, like the video): Work · About · Fun (active = solid blue fill, white text) + black ★
-  **Ask Nupur (does nothing yet; Nupur will decide)** + ‹ n/N › counter, always in the bar so tabs never shift.
-- **Moves:** tab or click a wall → turn to face it. Click a frame → step up to it (Figma selection: blue outline,
-  white handles, "Hug × Hug" tag); second click reaches links inside. Arrows / scroll walk frame to frame; Esc steps back.
+  back into the room. (The "How this works" note was removed 2026-11-10, Nupur.) About 2s after the room appears
+  the camera **slowly pans (3.2s) to the Work wall's first frame**, same framing as the Work tab (`AUTO_PAN_DELAY` in
+  Gallery.tsx, `.is-slow` in gallery.css). Any move the visitor makes first cancels it.
+- **Room:** CSS 3D, one "camera" (`components/gallery/Gallery.tsx`). **Front wall = Work** (case tiles, what you face
+  from the doorway), **left wall = About** (statement, quick facts, experience, links), **right wall = Fun** (paintings,
+  nightstand, crane). Work and About swapped places on 2026-11-10 (Nupur). Room size lives only in
+  `ROOM` (Gallery.tsx), passed to the CSS as `--W --D --H`. **Depth D = 3200** (2400 felt too close, 4000 too far with
+  empty side walls; 2026-11-10). About/Fun frames are spread along their whole wall (`space-evenly`) so the nearest
+  ones fill the screen edges from the doorway. Keep W, D, H multiples of 40 (dot grid).
+- **Bottom bar** (white, like the video; hidden on the intro screen, fades in with the room): four tabs, Work · About · Fun · ✦ **Ask Nupur** (a tab, not a button: same
+  look as the others plus the sparkle; it opens the chat and is the only selected tab while the chat is open), then the
+  ‹ n/N › counter, always in the bar so tabs never shift. The bar keeps its natural width. Selected tab = solid blue
+  fill, white text.
+- **"Say Hi!"** is a floating button **top right** (mirrors the breadcrumb), **accent blue `#0D99FF` fill, white text**
+  (3.0:1, the same accepted trade-off as the selected tab), opening an email to `EMAIL` in `lib/content.ts`
+  (nupur.productdesign@gmail.com; if EMAIL is ever emptied it links nowhere and says "Email address coming soon").
+  History 2026-11-10: sparkle in the bar → Ask Nupur top right + Say Hi! in the bar → swapped → Ask Nupur as a tab,
+  Say Hi! blue (Nupur).
+- **Ask-Nupur in the gallery (2026-11-10):** the bar's Ask Nupur tab opens the chat **docked just above the bottom bar**
+  like Figma's actions panel on its toolbar: **exactly the bar's width** (measured in Gallery.tsx → `--bar-w`), 10px gap, same corners,
+  soft shadow, up to 640px tall, **sliding down from the top**, over a **lightly blurred room** (6px blur, `.g-ask-backdrop`;
+  clicking it closes the chat), styled after
+  Figma's AI chat panel Nupur shared. (Was a panel docked on the right; moved to the centre at her request.) It is the **same `ChatPanel`
+  component** as the classic site, so every element is unchanged (title + ⓘ disclaimer, reset, close, welcome, the 4
+  suggested questions, "Ask about Nupur…" input, `/api/ask`); only the look differs: light tokens in the
+  `.g-root .g-ask` block of `tokens.css`, shapes in `app/gallery.css`. Visitor messages = grey `#F0F0F0` bubbles on the
+  right; Ask-Nupur answers = plain text, no bubble; sentence-case title. Esc closes it (focus returns to the Ask Nupur tab);
+  arrow keys and scroll inside it don't move the camera. The chat sits centred **above the bottom bar** (never
+  overlapping it), and the **bar stays sharp, above the blur** (Nupur, 2026-11-10). Using a tab or arrow in the bar
+  closes the chat. Layers (z-index): breadcrumb + Say Hi! 40 (both blurred while chatting) < intro 45 < cursors 50 < backdrop 55 <
+  chat 56 < bottom bar 57.
+- **Cursors (2026-11-10):** orange "You" tag follows the visitor's pointer (mouse/trackpad only). Purple **"Nupur"
+  cursor no longer wanders**: it sits at the **bottom-right corner of the selected frame** (intro frame, then whichever
+  frame is focused), like "Alim" in the reference, following it through camera moves; it fades out in the doorway
+  view. **Cursor chat hint:** on the About and Fun walls only (never Work), Nupur's tag turns into a Figma-style chat
+  bubble: "Click anywhere on the canvas to go back to the start". ~1.4s after arriving, then once every 10s, 3.5s each
+  (`HINT_*` in `components/gallery/Cursors.tsx`). Opens to the left near the right screen edge.
 - Headline copy is `GALLERY_HEADLINE` in `lib/content.ts` (TODO: Nupur picks the final line). About/Fun copy moved to
   `ABOUT` / `FUN` there, shared by `/` and `/gallery`.
 - **Not done yet:** drag to look around; phone layout is a first pass (room is small on tall screens); real photos.
