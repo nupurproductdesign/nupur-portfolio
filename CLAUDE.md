@@ -90,7 +90,7 @@ The rail is the same near-black as the page with a thin divider. History: ivory/
   chat tab shows only the dot.
 
 ## Case studies (4 tiles, in `lib/content.ts`)
-1. A campaign management system for brand collaborations — LEHLAH • SHIPPED 2026 (main case study)
+1. One Stop to Run Brand Collaborations — LEHLAH • SHIPPED 2026 (main case study)
 2. Bringing influencer marketing into an affiliate-first app — LEHLAH • SHIPPED 2026
 3. Luna Design System, and teaching it to AI — LUNA • ONGOING
 4. Agency workspaces: many brands, one login — LUNA • IN PROGRESS
@@ -128,6 +128,11 @@ Principle: visuals carry the weight, copy only captions them. No long paragraphs
   tier-based pricing validation; bulk approvals with caps; report generation with fallbacks when affiliate data is
   missing; onboarding and brand verification edge cases; effort-vs-impact campaign score as a simple visual.
 - **Impact numbers pending from her manager. Never invent numbers; leave clearly marked TODOs.**
+- **Text done (2026-11-14):** copy is in `lib/case-studies.ts` (`CASE_CONTENT["campaign-management"]`), word for word
+  from the "Case Study 1" section of Nupur's Google Doc "Case Studies". Page title: "One Stop to Run Brand
+  Collaborations". Stats (1000+ creators, 3000+ applications/month, 75+ campaigns, 400+ reports) come from her doc.
+  All images/GIFs are still dashed placeholders ("Hero visual", "Before and after", "Creatives"). The Work tile uses the same title
+  (Nupur, 2026-11-14).
 
 ## Ask-Nupur chatbot
 - Frontend (`ChatPanel.tsx`), structure modelled on a reference Nupur shared (2026-10-02):

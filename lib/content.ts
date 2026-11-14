@@ -35,7 +35,7 @@ export type CaseStudy = {
 };
 
 export const CASES: CaseStudy[] = [
-  { kind: "campaigns", org: "LehLah", status: "Shipped 2026", title: "A campaign management system for brand collaborations", glow: "var(--glow-1)", href: "/work/campaign-management", slug: "campaign-management" },
+  { kind: "campaigns", org: "LehLah", status: "Shipped 2026", title: "One Stop to Run Brand Collaborations", glow: "var(--glow-1)", href: "/work/campaign-management", slug: "campaign-management" },
   { kind: "phone", org: "LehLah", status: "Shipped 2026", title: "Bringing influencer marketing into an affiliate-first app", glow: "var(--glow-2)", href: "#work" },
   { kind: "tokens", org: "Luna", status: "Ongoing", title: "Luna Design System, and teaching it to AI", glow: "var(--glow-3)", href: "#work" },
   { kind: "workspaces", org: "Luna", status: "In progress", title: "Agency workspaces: many brands, one login", glow: "var(--glow-4)", href: "#work" },
@@ -46,7 +46,7 @@ export const CANNED: Record<string, string> = {
   "What do you work on?":
     "I'm a product designer at LehLah, a B2B influencer marketing platform. I design across Luna, the tool 100+ brands use to run campaigns, and the creator app used by 600K+ creators. Lately I'm also shipping frontend, not just mockups.",
   "Walk me through a case study":
-    "My favourite is the campaign management system. Brands ran paid collabs over WhatsApp and spreadsheets, with reports stitched together by hand. We moved it into the product with a tracked journey from application to payout and auto-generated reports. I owned the creator report UI and the creator-side mobile flow.",
+    "My favourite is One Stop to Run Brand Collaborations. One LehLah PoC could be juggling 50-100 creators across campaigns over chats and spreadsheets. We built a creator app flow to discover and apply for paid collabs, and a brand platform to run campaigns and read reports. I led the creator-facing experience end to end; it now sees 3000+ applications a month.",
   "How do you work with engineers?":
     "Closely, and in tokens. I align prototypes to the Luna Design System, swap hardcoded styles for semantic tokens and write developer-ready handoff docs. I also built a Claude skill that encodes our design system, so new work starts on-system.",
   "What are your side quests?":

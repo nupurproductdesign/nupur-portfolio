@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import CaseStudyPage from "@/components/case-study/CaseStudyPage";
 import { CASES } from "@/lib/content";
+import { CASE_CONTENT } from "@/lib/case-studies";
 import "../../case-study.css";
 
 // One page per case study that has a `slug` in lib/content.ts (/work/<slug>).
@@ -14,7 +15,9 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const study = CASES.find((c) => c.slug === slug);
-  return { title: study ? `${study.title} — Nupur Gidhi` : "Case study — Nupur Gidhi" };
+  const content = CASE_CONTENT[slug];
+  if (!study) return { title: "Case study — Nupur Gidhi" };
+  return { title: `${content?.title ?? study.title} — Nupur Gidhi`, description: content?.subtitle };
 }
 
 // light Figma canvas: browser chrome matches --fig-canvas (tokens.css)
