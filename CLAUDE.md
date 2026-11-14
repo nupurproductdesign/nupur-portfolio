@@ -131,7 +131,13 @@ Principle: visuals carry the weight, copy only captions them. No long paragraphs
 - **Text done (2026-11-14):** copy is in `lib/case-studies.ts` (`CASE_CONTENT["campaign-management"]`), word for word
   from the "Case Study 1" section of Nupur's Google Doc "Case Studies". Page title: "One Stop to Run Brand
   Collaborations". Stats (1000+ creators, 3000+ applications/month, 75+ campaigns, 400+ reports) come from her doc.
-  All images/GIFs are still dashed placeholders ("Hero visual", "Before and after", "Creatives"). The Work tile uses the same title
+  Nupur has since edited the copy in place (2026-11-15), so `lib/case-studies.ts` is now the source of truth, not the doc.
+  All images/GIFs are still dashed placeholders ("Hero visual", "Creatives"); the Opportunity before/after is a real
+  HTML diagram (`beforeAfter` block). Layout decisions (Nupur, 2026-11-14/15): text spans the full frame width; title
+  max 60px; section headings 36px; highlighted lines 18px with a blue bar; section names 13px #999999; subtitle, meta
+  labels, product-card text and both core-flows' paragraphs #7E7E7E (her choice, just under AA); impact stats are their
+  own "The impact" section; App side core flows = two columns (creative left, text right; stacked text-first on phones);
+  Brand side stays full width; `\n` in a paragraph = a line break. The Work tile uses the same title
   (Nupur, 2026-11-14).
 
 ## Ask-Nupur chatbot

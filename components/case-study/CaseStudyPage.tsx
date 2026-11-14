@@ -48,19 +48,37 @@ export default function CaseStudyPage({ study }: { study: CaseStudy }) {
               </section>
               <p className="cs-own">{c.ownership}</p>
 
-              {c.parts.map((part) => (
-                <section className="cs-part" key={part.heading}>
-                  {part.eyebrow && <span className="cs-eyebrow label">{part.eyebrow}</span>}
-                  <h2>{part.heading}</h2>
-                  <Blocks blocks={part.blocks} />
-                  {part.subs?.map((s) => (
-                    <div className="cs-sub-part" key={s.heading}>
-                      <h3>{s.heading}</h3>
-                      <Blocks blocks={s.blocks} />
-                    </div>
-                  ))}
-                </section>
-              ))}
+              {c.parts.map((part, i) =>
+                part.split ? (
+                  // two columns: each flow is a row with its heading + text on the left and its visual on the right
+                  <section className="cs-part is-split" key={i}>
+                    {part.eyebrow && <span className="cs-eyebrow label">{part.eyebrow}</span>}
+                    {[{ heading: part.heading, blocks: part.blocks ?? [] }, ...(part.subs ?? [])].map((row, j) => (
+                      <div className="cs-split" key={j}>
+                        <div className="cs-split-text">
+                          {row.heading && <h2>{row.heading}</h2>}
+                          <Blocks blocks={row.blocks.filter((b) => b.kind !== "visual")} />
+                        </div>
+                        <div className="cs-split-media">
+                          <Blocks blocks={row.blocks.filter((b) => b.kind === "visual")} />
+                        </div>
+                      </div>
+                    ))}
+                  </section>
+                ) : (
+                  <section className={`cs-part${part.muted ? " is-muted" : ""}`} key={i}>
+                    {part.eyebrow && <span className="cs-eyebrow label">{part.eyebrow}</span>}
+                    {part.heading && <h2>{part.heading}</h2>}
+                    <Blocks blocks={part.blocks} />
+                    {part.subs?.map((s) => (
+                      <div className="cs-sub-part" key={s.heading}>
+                        <h2>{s.heading}</h2>
+                        <Blocks blocks={s.blocks} />
+                      </div>
+                    ))}
+                  </section>
+                ),
+              )}
             </>
           ) : (
             <p className="cs-tbd">Case study coming soon.</p>
@@ -97,6 +115,8 @@ function Blocks({ blocks = [] }: { blocks?: Block[] }) {
                 ))}
               </dl>
             );
+          case "beforeAfter":
+            return <BeforeAfter key={i} before={b.before} after={b.after} />;
           case "products":
             return (
               <div key={i} className="cs-products">
@@ -111,6 +131,33 @@ function Blocks({ blocks = [] }: { blocks?: Block[] }) {
         }
       })}
     </>
+  );
+}
+
+// Before/after diagram: the same three-step journey, first run by the LehLah team, then by creators themselves.
+type Journey = { who: string; steps: string[] };
+function BeforeAfter({ before, after }: { before: Journey; after: Journey }) {
+  const row = (tag: string, j: Journey, cls: string) => (
+    <figure className={`cs-ba-row ${cls}`}>
+      <figcaption>
+        <span className="cs-ba-tag">{tag}</span>
+        <span className="cs-ba-who">Driven by {j.who}</span>
+      </figcaption>
+      <ol>
+        {j.steps.map((step, i) => (
+          <li key={step}>
+            <span className="cs-ba-num" aria-hidden="true">{i + 1}</span>
+            {step}
+          </li>
+        ))}
+      </ol>
+    </figure>
+  );
+  return (
+    <div className="cs-ba">
+      {row("Before", before, "is-before")}
+      {row("After", after, "is-after")}
+    </div>
   );
 }
 

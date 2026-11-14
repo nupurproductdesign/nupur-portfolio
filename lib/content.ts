@@ -46,7 +46,7 @@ export const CANNED: Record<string, string> = {
   "What do you work on?":
     "I'm a product designer at LehLah, a B2B influencer marketing platform. I design across Luna, the tool 100+ brands use to run campaigns, and the creator app used by 600K+ creators. Lately I'm also shipping frontend, not just mockups.",
   "Walk me through a case study":
-    "My favourite is One Stop to Run Brand Collaborations. One LehLah PoC could be juggling 50-100 creators across campaigns over chats and spreadsheets. We built a creator app flow to discover and apply for paid collabs, and a brand platform to run campaigns and read reports. I led the creator-facing experience end to end; it now sees 3000+ applications a month.",
+    "My favourite is One Stop to Run Brand Collaborations. One person from LehLah could be juggling 50-100 creators across campaigns over chats and spreadsheets. We built a creator app flow to discover and apply for paid collabs, and a brand platform to run campaigns and read reports. I led the creator-facing experience end to end; it now sees 3000+ applications a month.",
   "How do you work with engineers?":
     "Closely, and in tokens. I align prototypes to the Luna Design System, swap hardcoded styles for semantic tokens and write developer-ready handoff docs. I also built a Claude skill that encodes our design system, so new work starts on-system.",
   "What are your side quests?":

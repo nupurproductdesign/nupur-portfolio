@@ -7,13 +7,17 @@ export type Block =
   | { kind: "lead"; text: string } // a bold line from the doc, shown as an emphasised takeaway
   | { kind: "visual"; label: string; note?: string; wide?: boolean }
   | { kind: "stats"; items: { value: string; label: string }[] }
-  | { kind: "products"; items: { name: string; text: string }[] };
+  | { kind: "products"; items: { name: string; text: string }[] }
+  // a before/after diagram: two rows of steps joined by arrows, `who` says who drives each journey
+  | { kind: "beforeAfter"; before: { who: string; steps: string[] }; after: { who: string; steps: string[] } };
 
 export type Part = {
   eyebrow?: string; // small caps label, e.g. "THE PROBLEM"
-  heading: string;
+  heading?: string; // optional: a section can be just blocks (e.g. the impact numbers)
   blocks?: Block[];
   subs?: { heading: string; blocks: Block[] }[]; // sub-sections (core flows, design decisions)
+  split?: boolean; // two columns: visual left, text right, one row per flow
+  muted?: boolean; // grey (#7E7E7E) paragraphs, like the App side core flows
 };
 
 export type CaseStudyContent = {
@@ -46,7 +50,7 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
         heading: "100 creators. 200 pieces of content. One brand collaboration.",
         blocks: [
           { kind: "p", text: "A haircare brand approached LehLah with a request of running a campaign with 100 creators delivering 200 content pieces on Instagram. But getting this done involved much more than finding 100 creators." },
-          { kind: "p", text: "One PoC from LehLah execution team could be coordinating with 50-100 creators at different stages of multiple campaigns at the same time. Briefs, negotiations, drafts, content links and payment details moved between conversations and spreadsheets." },
+          { kind: "p", text: "One person from LehLah execution team could be coordinating with 50-100 creators at different stages of multiple campaigns at the same time. Briefs, negotiations, drafts, content links and payment details moved between conversations and spreadsheets." },
           { kind: "lead", text: "The challenge wasn't running one campaign. It was repeating this process every time a new brand came in." },
         ],
       },
@@ -58,10 +62,9 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
           { kind: "lead", text: "We saw an opportunity to bring the entire collaboration journey into one connected system." },
           { kind: "p", text: "For creators, this meant being able to discover and apply for collaborations that matched their interests, profile and expected payment — instead of waiting for someone to contact them." },
           {
-            kind: "visual",
-            wide: true,
-            label: "Before and after",
-            note: "Before: LehLah team finds creators → Contacts them → Coordinates the campaign. After: Creators discover opportunities → Choose collaborations → Apply directly",
+            kind: "beforeAfter",
+            before: { who: "LehLah team", steps: ["LehLah team finds creators", "Contacts them", "Coordinates the campaign"] },
+            after: { who: "creators", steps: ["Creators discover opportunities", "Choose collaborations", "Apply directly"] },
           },
         ],
       },
@@ -69,7 +72,7 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
         eyebrow: "The solution",
         heading: "Two experiences. One connected campaign.",
         blocks: [
-          { kind: "p", text: "Our team worked on two interconnected products –" },
+          { kind: "p", text: "Our team worked on two interconnected products:" },
           {
             kind: "products",
             items: [
@@ -78,6 +81,12 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
             ],
           },
           { kind: "lead", text: "My primary ownership was the creator-facing Paid Collaborations journey, from discovering a campaign to completing its requirements. I also contributed to design decisions for Campaign Reports and the broader brand-facing platform." },
+        ],
+      },
+      // impact numbers: a section of their own, named but with no heading
+      {
+        eyebrow: "The impact",
+        blocks: [
           {
             kind: "stats",
             items: [
@@ -91,18 +100,18 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
       },
       {
         eyebrow: "App side core flows",
+        split: true,
         heading: "What if creators could discover opportunities themselves?",
         blocks: [
-          { kind: "p", text: "Brands set requirements based on the type of content creators they need, including their niche, audience and Instagram profile." },
-          { kind: "p", text: "Creators can then discover opportunities that match their profile and apply for the ones they're interested in." },
+          { kind: "p", text: "Brands set requirements based on the type of content creators they need, including their niche, audience and Instagram profile. Creators can then discover opportunities that match their profile and apply for the ones they're interested in." },
           creatives(),
         ],
         subs: [
           {
             heading: "One page for campaign details and next steps",
             blocks: [
-              { kind: "p", text: "Applying for a collaboration is only the beginning - once selected, creators need to follow brand guidelines, publish content, submit it and track their payment." },
-              { kind: "p", text: "I designed the campaign page to bring all this information together." },
+              { kind: "p", text: "A single page view for the creators where they can see brand requirements, content guidelines, timelines, their current progress and the next action they need to take." },
+              { kind: "p", text: "The page updates as creators move through the collaboration, from applying and getting approved to submitting content and tracking performance." },
               creatives(),
             ],
           },
@@ -110,7 +119,7 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
             heading: "Connecting content with sales",
             blocks: [
               { kind: "p", text: "After getting approved, creators can connect their Instagram Reels or posts to LehLah's Auto-DM feature." },
-              { kind: "p", text: "Auto-DM automatically shares product links with interested viewers, allowing creators to earn commissions and track sales generated through their content." },
+              { kind: "p", text: "Auto-DM automatically shares product links with interested viewers who comment selected keyword, allowing creators to earn commissions and track sales generated through their content." },
               creatives(),
             ],
           },
@@ -118,6 +127,7 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
       },
       {
         eyebrow: "Brand side core flows",
+        muted: true,
         heading: "Two simple questions : What did the brand invest? What did the brand get back?",
         blocks: [
           { kind: "p", text: "Instead of introducing brands to a wall of metrics, the team organized the experience around the relationship between investment and results along with a unique score algorithm to summarize the overall performance of the collaboration." },
@@ -127,8 +137,7 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
           {
             heading: "Who are the top contributors of campaign success",
             blocks: [
-              { kind: "p", text: "Not every creator contributes in the same way. Some might reach the largest audience. Others get more engagement or generate more sales." },
-              { kind: "p", text: "We included creator-level comparisons to help brands identify who performed best across these different areas." },
+              { kind: "p", text: "Not every creator contributes in the same way. Some might reach the largest audience. Others get more engagement or generate more sales.\nWe included creator-level comparisons to help brands identify who performed best across these different areas." },
               creatives(),
             ],
           },
@@ -151,9 +160,17 @@ export const CASE_CONTENT: Record<string, CaseStudyContent> = {
         ],
         subs: [
           {
+            heading: "Keeping everything in one place",
+            blocks: [
+              { kind: "p", text: "A paid collaboration involves multiple steps, and creators often need to switch between Instagram and LehLah to complete them." },
+              { kind: "p", text: "With less manual guidance from the LehLah team, splitting campaign information and tasks across different pages could make it harder for creators to keep track of what to do next." },
+              { kind: "lead", text: "We decided to keep campaign details, progress and next actions on one page, so creators could return to the same place at any stage without having to figure out where to go next." },
+            ],
+          },
+          {
             heading: "Bringing affiliate links into Paid Collaborations",
             blocks: [
-              { kind: "p", text: "We added Auto-DM connection as a part of the content submission step making it mandatory for Instagram reels and posts. For Instagram story as a deliverable, an additional step was introduced to generate affiliate links after uploading the content so that creators can tag products in their stories." },
+              { kind: "p", text: "We added Auto-DM connection as a part of the content submission step making it mandatory for Instagram reels and posts. For Instagram story as a deliverable, an additional step was introduced to generate affiliate links before uploading the content so that creators can tag products in their stories." },
               { kind: "lead", text: "This helped creators to track and earn from product sales where applicable and brands to track product sales across various marketplaces." },
             ],
           },
