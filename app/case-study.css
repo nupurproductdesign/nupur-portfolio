@@ -88,6 +88,7 @@
 .cs-ph{display:grid;place-items:center;align-content:center;gap:8px;text-align:center;padding:16px;margin:28px 0;border:1.5px dashed var(--fig-grid);border-radius:6px;background:var(--fig-canvas);color:var(--fig-muted);font-size:13px}
 .cs-ph small{max-width:46em;font-size:12px;line-height:1.5}
 .cs-ph-hero{aspect-ratio:16/9;margin-top:40px}
+.cs-hero{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;margin:40px 0 28px;border-radius:6px;background:var(--fig-canvas)}
 .cs-ph-image{aspect-ratio:16/9}
 .cs-ph-wide{min-height:180px}
 

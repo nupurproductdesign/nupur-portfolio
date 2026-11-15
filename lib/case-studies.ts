@@ -24,6 +24,7 @@ export type CaseStudyContent = {
   eyebrow: string;
   title: string;
   subtitle: string;
+  hero?: { mp4: string; webm?: string; poster: string }; // looping 16:9 clip in place of the hero placeholder
   meta: { k: string; v: string[] }[]; // each value line on its own row
   ownership: string;
   parts: Part[];
@@ -34,9 +35,11 @@ const creatives = (label = "Creatives"): Block => ({ kind: "visual", label });
 export const CASE_CONTENT: Record<string, CaseStudyContent> = {
   "campaign-management": {
     eyebrow: "LehLah",
-    title: "One Stop to Run Brand Collaborations",
+    title: "One place to run Brand Collaborations",
     subtitle:
       "Designing how creators discover and manage paid collaborations, while helping shape a connected platform for brands to run campaigns and understand their results.",
+    // same flow as the Work tile clip, made 16:9 (from Nupur's Figma "Case study thumbnail" section)
+    hero: { mp4: "/work/campaign-management/hero.mp4", webm: "/work/campaign-management/hero.webm", poster: "/work/campaign-management/hero-poster.jpg" },
     meta: [
       { k: "Role", v: ["Product Designer"] },
       { k: "Timeline", v: ["March-April 2026"] },

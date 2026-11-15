@@ -90,12 +90,16 @@ The rail is the same near-black as the page with a thin divider. History: ivory/
   chat tab shows only the dot.
 
 ## Case studies (4 tiles, in `lib/content.ts`)
-1. One Stop to Run Brand Collaborations — LEHLAH • SHIPPED 2026 (main case study)
+1. One place to run Brand Collaborations — LEHLAH • SHIPPED 2026 (main case study)
 2. Bringing influencer marketing into an affiliate-first app — LEHLAH • SHIPPED 2026
 3. Luna Design System, and teaching it to AI — LUNA • ONGOING
 4. Agency workspaces: many brands, one login — LUNA • IN PROGRESS
 
-Tiles use illustrative CSS mock screens until real screenshots arrive. Case 1 links to its page
+Tiles use illustrative CSS mock screens until real screenshots arrive. Case 1's tile now plays a looping clip
+(`thumb` in `lib/content.ts` → `components/ThumbVideo.tsx`, files in `public/work/campaign-management/`), made
+2026-11-15 from Nupur's Figma section "Case study thumbnail" (Portfolio file, node 153:10428: 6 frames, 3 taps,
+each zoomed frame = its full frame at 1.6x). Video, not GIF, on the site (1.8 MB vs 8.5 MB); poster shown for
+reduced motion. Build script + GIFs live in the git-ignored `brag-output/`. Case 1 links to its page
 `/work/campaign-management`; the others still link to `#work` (give a case a `slug` + `href` in `lib/content.ts` to
 give it a page).
 
@@ -129,7 +133,7 @@ Principle: visuals carry the weight, copy only captions them. No long paragraphs
   missing; onboarding and brand verification edge cases; effort-vs-impact campaign score as a simple visual.
 - **Impact numbers pending from her manager. Never invent numbers; leave clearly marked TODOs.**
 - **Text done (2026-11-14):** copy is in `lib/case-studies.ts` (`CASE_CONTENT["campaign-management"]`), word for word
-  from the "Case Study 1" section of Nupur's Google Doc "Case Studies". Page title: "One Stop to Run Brand
+  from the "Case Study 1" section of Nupur's Google Doc "Case Studies". Page title (renamed 2026-11-15): "One place to run Brand
   Collaborations". Stats (1000+ creators, 3000+ applications/month, 75+ campaigns, 400+ reports) come from her doc.
   Nupur has since edited the copy in place (2026-11-15), so `lib/case-studies.ts` is now the source of truth, not the doc.
   All images/GIFs are still dashed placeholders ("Hero visual", "Creatives"); the Opportunity before/after is a real

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { CaseKind, CaseStudy } from "@/lib/content";
+import ThumbVideo from "./ThumbVideo";
 
 // TODO(nupur): replace the illustrative CSS mock screens with real (NDA-safe) screenshots.
 export default function CaseTile({ study }: { study: CaseStudy }) {
@@ -8,9 +9,14 @@ export default function CaseTile({ study }: { study: CaseStudy }) {
     <a className="case" href={study.href} style={{ "--glow": study.glow } as CSSProperties}>
       <div className="tilebox">
         <span className="status label">{study.status}</span>
-        <div className="inner" style={inner}>
-          {visual}
-        </div>
+        {study.thumb ? (
+          // real product flow (from Nupur's Figma), fills the square tile
+          <ThumbVideo {...study.thumb} />
+        ) : (
+          <div className="inner" style={inner}>
+            {visual}
+          </div>
+        )}
         <div className="hov">
           <span>View case study</span>
           <span className="arrow">→</span>

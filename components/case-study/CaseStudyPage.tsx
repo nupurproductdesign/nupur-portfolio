@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CaseStudy } from "@/lib/content";
 import { CASE_CONTENT, type Block } from "@/lib/case-studies";
+import ThumbVideo from "@/components/ThumbVideo";
 
 // A case study page: the gallery's dot-grid canvas with one big Figma frame (80vw) that reads like a page.
 // Copy lives in lib/case-studies.ts (word for word from Nupur's doc). Images are dashed placeholders until they arrive.
@@ -32,7 +33,7 @@ export default function CaseStudyPage({ study }: { study: CaseStudy }) {
             <span className="cs-status label">{c?.eyebrow ?? study.org} · {study.status}</span>
             <h1>{title}</h1>
             {c && <p className="cs-sub">{c.subtitle}</p>}
-            <Visual label="Hero visual" hero />
+            {c?.hero ? <ThumbVideo {...c.hero} className="cs-hero" /> : <Visual label="Hero visual" hero />}
           </section>
 
           {c ? (
