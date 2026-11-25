@@ -56,8 +56,9 @@ export const CANNED: Record<string, string> = {
 };
 
 // ---------- Gallery (/gallery) ----------
-// TODO(nupur): final headline. The gallery intro types `lead` + `note` as one line.
-export const GALLERY_HEADLINE = { lead: "Nupur is a Product Designer who", note: "Vibe Codes" };
+// The gallery intro types `lead` + `note` as one line, after a round photo of Nupur (final copy, Nupur 2026-11-25: shortened, "what she designs" dropped).
+export const GALLERY_HEADLINE = { lead: "Nupur is a Product Designer who", note: "ships" };
+export const PORTRAIT = "/about/nupur.jpg"; // square crop of Nupur's beach photo, shown in a circle
 
 // About copy, shared by the About section on / and the About wall in /gallery.
 // `statement` is split so the emphasis word can be picked out in the accent colour.
