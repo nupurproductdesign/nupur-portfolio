@@ -230,7 +230,7 @@ site below, kept unchanged so it can be compared or reused (Nupur's choice; dele
   Cursors: orange "You" `#C2410C`, purple "Nupur" `#8A3FFC`. Tokens: `--fig-*` block scoped to `.g-root` at the end
   of `app/tokens.css`. Case tiles are light too (white artboard, `#F5F5F5` tile, dark-ink pills), via a
   `.g-root .g-case` token block in `app/tokens.css`; tiles on `/classic` stay dark. `/classic` keeps the dark butter theme.
-- **Flow:** intro canvas with one selected Figma text frame; the headline types itself in black, then the camera pulls
+- **Flow:** intro canvas with one selected Figma text frame; a round photo of Nupur (`public/about/nupur.jpg`, `PORTRAIT`) pops in at the start of the line and the headline "Nupur is a Product Designer who ships" (final, 2026-11-25) types itself in black, then the camera pulls
   back into the room. (The "How this works" note was removed 2026-11-10, Nupur.) About 2s after the room appears
   the camera **slowly pans (3.2s) to the Work wall's first frame**, same framing as the Work tab (`AUTO_PAN_DELAY` in
   Gallery.tsx, `.is-slow` in gallery.css). Any move the visitor makes first cancels it.

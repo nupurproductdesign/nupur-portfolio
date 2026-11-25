@@ -89,6 +89,21 @@
 .g-intro-frame{cursor:default;background:var(--fig-frame);padding:clamp(14px,2vw,24px) clamp(16px,2.4vw,32px);transition:transform .7s var(--ease)}
 .g-intro.is-leaving .g-intro-frame{transform:scale(.9)}
 .g-intro .g-head{font-family:var(--font-sans);font-weight:500;font-size:clamp(36px,6vw,84px);line-height:1.08;letter-spacing:-.045em;margin:0;max-width:11em;text-wrap:balance;color:var(--fig-text)}
+/* intro: two columns, round photo left, headline right. The row carries the headline's font size so the photo
+   (in em) scales with the type; the photo pops in first, then the line types */
+.g-intro-row{display:grid;grid-template-columns:auto auto;align-items:center;gap:.35em;font-size:clamp(36px,6vw,84px)}
+/* phones: photo stacks above the headline so the text keeps its width */
+@media (max-width:600px){.g-intro-row{grid-template-columns:auto;gap:.3em}.g-avatar{width:1.5em;height:1.5em}}
+.g-intro-row .g-head{font-size:1em}
+/* typed line sits on top of an invisible copy of the full line; same wrapping (no balance) so lines don't jump */
+.g-intro-row .g-head{position:relative;text-wrap:wrap}
+.g-type-ghost{visibility:hidden}
+.g-type-live{position:absolute;inset:0}
+.g-avatar{display:block;width:2em;height:2em;border-radius:50%;overflow:hidden;background:var(--fig-line);
+  animation:g-avatar-in .5s var(--ease) both}
+.g-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+@keyframes g-avatar-in{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.g-avatar{animation:none}}
 .g-caret{display:inline-block;width:.05em;height:.92em;margin-left:.03em;vertical-align:-.1em;background:var(--fig-text);animation:g-blink 1s steps(1) infinite}
 @keyframes g-blink{50%{opacity:0}}
 .g-skip{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--fig-muted)}
