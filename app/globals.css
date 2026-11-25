@@ -104,6 +104,9 @@ h1 .hl:hover{transform:rotate(-1.5deg) translateY(-.05em)}
 .status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--tag-dot);flex:none}
 .inner{width:62%;transition:transform .8s var(--ease)}
 .case:hover .inner{transform:translateY(-8px) scale(1.03)}
+/* tile clip (CaseTile thumb): covers the whole square, gentle zoom on hover like the mock screens */
+.thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform .8s var(--ease)}
+.case:hover .thumb{transform:scale(1.03)}
 /* small tiles: give the placeholder mocks more room so their text doesn't truncate */
 @container (max-width:420px){.inner{width:96%!important;margin-top:28px;zoom:.86}.phone{width:min(150px,36%);padding:12px 8px;gap:6px}.phone .h{white-space:nowrap;font-size:11.5px}.phone .pcard:nth-of-type(3){display:none}}
 .hov{position:absolute;left:16px;right:16px;bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13.5px;font-weight:500;color:var(--text);opacity:0;transform:translateY(8px);transition:opacity .4s var(--ease),transform .4s var(--ease)}

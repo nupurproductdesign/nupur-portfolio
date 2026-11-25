@@ -26,27 +26,71 @@
 .cs-size{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:10px;white-space:nowrap;
   font-size:11px;font-weight:500;line-height:1;padding:4px 6px;border-radius:3px;background:var(--fig-blue);color:var(--fig-on-blue)}
 
-/* sections */
-.cs-cover h1{font-family:var(--font-sans);font-weight:500;font-size:clamp(32px,4.4vw,64px);line-height:1.08;letter-spacing:-.04em;margin:16px 0 0;max-width:16em;text-wrap:balance}
+/* sections: a readable text column inside the wide frame; visuals use the full frame width */
+.cs-cover h1{font-family:var(--font-sans);font-weight:500;font-size:clamp(32px,4.4vw,60px);line-height:1.08;letter-spacing:-.04em;margin:16px 0 0;text-wrap:wrap}
+.cs-sub{margin:20px 0 0;font-size:clamp(16px,1.4vw,19px);line-height:1.5;color:#7E7E7E;text-wrap:pretty}
 .cs-status{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;padding:6px 10px;border-radius:999px;background:var(--fig-canvas);color:var(--fig-text)}
 .cs-status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--fig-blue)}
-.cs-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:48px;padding-top:24px;border-top:1px solid var(--fig-line)}
-.cs-meta > div{display:grid;gap:6px}
-.cs-meta .label{font-size:11px;color:var(--fig-muted)}
-.cs-tbd{color:var(--fig-muted);font-size:15px}
-.cs-section{margin-top:72px}
-.cs-section h2{font-size:11px;color:var(--fig-muted);margin:0 0 16px}
-.cs-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.cs-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.cs-moment{display:grid;gap:12px;margin-bottom:32px}
+.cs-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:48px;padding-top:24px;border-top:1px solid var(--fig-line)}
+.cs-meta > div{display:grid;gap:6px;align-content:start}
+.cs-meta .label{font-size:11px;color:#7E7E7E}
+.cs-meta-v{display:grid;gap:2px;font-size:15px}
+.cs-tbd{color:var(--fig-muted);font-size:15px;margin-top:48px}
+.cs-own{margin:32px 0 0;font-size:16px;line-height:1.55;font-weight:500}
 
-/* placeholders: dashed boxes with their name, so the page shows its structure before content exists */
-.cs-ph{display:grid;place-items:center;border:1.5px dashed var(--fig-grid);border-radius:6px;background:var(--fig-canvas);color:var(--fig-muted);font-size:13px}
-.cs-ph-line{height:44px;margin-top:20px;max-width:640px;place-items:center start;padding-left:16px}
-.cs-ph-text{height:140px;max-width:760px}
+.cs-part{margin-top:clamp(48px,6vw,80px)}
+.cs-eyebrow{display:block;font-size:13px;color:#999999;margin-bottom:12px} /* section names: Nupur 2026-11-14, light on purpose (2.8:1 on white; #767676 would pass AA) */
+.cs-part h2{font-weight:500;font-size:clamp(24px,2.6vw,36px);line-height:1.15;letter-spacing:-.03em;margin:0 0 20px;text-wrap:wrap}
+.cs-part p{white-space:pre-line;margin:0 0 14px;font-size:16px;line-height:1.6;color:var(--fig-text);text-wrap:pretty}
+.cs-part .cs-lead{font-weight:500;font-size:18px;margin:22px 0;padding-left:14px;border-left:2px solid var(--fig-blue)}
+.cs-sub-part{margin-top:40px}
+.cs-products h3{font-weight:500;font-size:19px;line-height:1.3;letter-spacing:-.01em;margin:0 0 12px}
+
+.cs-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:24px 0;padding:0 0 16px}
+.cs-products > div{padding:20px;border:1px solid var(--fig-line);border-radius:6px}
+.cs-products p{margin:0;color:#7E7E7E}
+
+.cs-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0}
+.cs-stats > div{display:flex;flex-direction:column-reverse;gap:4px;padding:20px;background:var(--fig-canvas);border-radius:6px}
+.cs-stats dd{margin:0;font-size:clamp(28px,3vw,40px);font-weight:500;letter-spacing:-.03em;line-height:1}
+.cs-stats dt{font-size:13px;color:var(--fig-muted)}
+
+/* two-column flows (App side core flows): visual left, text right; the visual is portrait for app screens */
+.cs-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center}
+.cs-split + .cs-split{margin-top:clamp(40px,5vw,64px)}
+.cs-split-media .cs-ph{margin:0;aspect-ratio:4/5}
+.cs-split-text p,.cs-part.is-muted p:not(.cs-lead){color:#7E7E7E}
+.cs-split-media{order:-1} /* creatives on the left, text on the right (Nupur 2026-11-15) */
+
+/* before/after diagram (Opportunity): two rows of step cards joined by arrows. Before = grey, dashed links (manual,
+   team-driven); After = blue outline and solid blue links (creator-driven). Text stays --fig-text for AA contrast. */
+.cs-ba{display:grid;gap:16px;margin:32px 0}
+.cs-ba-row{margin:0;display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;padding:24px;border-radius:8px;background:var(--fig-canvas)}
+.cs-ba-row.is-after{background:var(--fig-frame);outline:1.5px solid var(--fig-blue)}
+.cs-ba-row figcaption{display:grid;gap:6px}
+.cs-ba-tag{justify-self:start;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:var(--label-tracking);padding:4px 8px;border-radius:3px;background:var(--fig-line);color:var(--fig-text)}
+.is-after .cs-ba-tag{background:var(--fig-blue);color:var(--fig-on-blue)}
+.cs-ba-who{font-size:13px;color:var(--fig-muted)}
+.cs-ba-row ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
+.cs-ba-row li{position:relative;display:flex;align-items:center;gap:10px;min-height:64px;padding:12px 14px;font-size:15px;line-height:1.35;
+  background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:6px}
+.is-after li{border-color:var(--fig-blue)}
+.cs-ba-num{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:500;background:var(--fig-line);color:var(--fig-text)}
+.is-after .cs-ba-num{background:var(--fig-blue);color:var(--fig-on-blue)}
+/* connector arrow between steps: a line with an arrowhead, in the 40px gap */
+.cs-ba-row li + li::before{content:"";position:absolute;right:calc(100% + 8px);top:50%;width:24px;border-top:1.5px dashed var(--fig-muted)}
+.cs-ba-row li + li::after{content:"";position:absolute;right:calc(100% + 6px);top:50%;width:7px;height:7px;transform:translateY(-50%) rotate(45deg);
+  border-top:1.5px solid var(--fig-muted);border-right:1.5px solid var(--fig-muted);margin-top:.75px}
+.is-after li + li::before{border-top-style:solid;border-top-color:var(--fig-blue)}
+.is-after li + li::after{border-color:var(--fig-blue)}
+
+/* placeholders: dashed boxes with their name (and the brief for the visual), until the real image/GIF exists */
+.cs-ph{display:grid;place-items:center;align-content:center;gap:8px;text-align:center;padding:16px;margin:28px 0;border:1.5px dashed var(--fig-grid);border-radius:6px;background:var(--fig-canvas);color:var(--fig-muted);font-size:13px}
+.cs-ph small{max-width:46em;font-size:12px;line-height:1.5}
 .cs-ph-hero{aspect-ratio:16/9;margin-top:40px}
-.cs-ph-image{aspect-ratio:4/3}
-.cs-ph-stat{height:120px}
+.cs-hero{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;margin:40px 0 28px;border-radius:6px;background:var(--fig-canvas)}
+.cs-ph-image{aspect-ratio:16/9}
+.cs-ph-wide{min-height:180px}
 
 /* back link, as a pill where the gallery's bottom bar sits */
 .cs-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:10;padding:4px;background:var(--fig-frame);border:1px solid var(--fig-line);border-radius:10px;box-shadow:var(--fig-shadow)}
@@ -55,5 +99,13 @@
 
 @media (max-width:760px){
   .cs-wrap{width:calc(100vw - 32px)}
-  .cs-meta,.cs-stats,.cs-two{grid-template-columns:1fr 1fr}
+  .cs-stats{grid-template-columns:1fr 1fr}
+  .cs-meta,.cs-products,.cs-split{grid-template-columns:1fr}
+  .cs-split-media{order:0} /* phones: heading + text first, creative below */
+  /* diagram stacks: steps run top to bottom, arrows point down */
+  .cs-ba-row{grid-template-columns:1fr;padding:16px}
+  .cs-ba-row ol{grid-template-columns:1fr;gap:28px}
+  .cs-ba-row li + li::before{right:auto;left:50%;top:auto;bottom:calc(100% + 6px);width:0;height:16px;border-top:0;border-left:1.5px dashed var(--fig-muted)}
+  .cs-ba-row li + li::after{right:auto;left:50%;top:auto;bottom:calc(100% + 5px);transform:translateX(-50%) rotate(135deg);margin:0}
+  .is-after li + li::before{border-left-style:solid;border-left-color:var(--fig-blue)}
 }
