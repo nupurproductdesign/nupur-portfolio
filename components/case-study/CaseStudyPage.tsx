@@ -107,7 +107,7 @@ function Blocks({ blocks = [] }: { blocks?: Block[] }) {
             return <Visual key={i} label={b.label} note={b.note} wide={b.wide} />;
           case "stats":
             return (
-              <dl key={i} className="cs-stats">
+              <dl key={i} className="cs-stats" style={{ "--n": b.items.length } as React.CSSProperties}>
                 {b.items.map((s) => (
                   <div key={s.label}>
                     <dt>{s.label}</dt>
@@ -115,6 +115,19 @@ function Blocks({ blocks = [] }: { blocks?: Block[] }) {
                   </div>
                 ))}
               </dl>
+            );
+          case "table":
+            return (
+              <table key={i} className="cs-table">
+                <thead>
+                  <tr>{b.head.map((h) => <th key={h} scope="col" className="label">{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {b.rows.map(([a, c]) => (
+                    <tr key={a}><td>{a}</td><td>{c}</td></tr>
+                  ))}
+                </tbody>
+              </table>
             );
           case "beforeAfter":
             return <BeforeAfter key={i} before={b.before} after={b.after} />;

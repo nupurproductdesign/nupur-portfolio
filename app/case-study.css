@@ -50,7 +50,7 @@
 .cs-products > div{padding:20px;border:1px solid var(--fig-line);border-radius:6px}
 .cs-products p{margin:0;color:#7E7E7E}
 
-.cs-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0}
+.cs-stats{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:16px;margin:0}
 .cs-stats > div{display:flex;flex-direction:column-reverse;gap:4px;padding:20px;background:var(--fig-canvas);border-radius:6px}
 .cs-stats dd{margin:0;font-size:clamp(28px,3vw,40px);font-weight:500;letter-spacing:-.03em;line-height:1}
 .cs-stats dt{font-size:13px;color:var(--fig-muted)}
@@ -61,6 +61,12 @@
 .cs-split-media .cs-ph{margin:0;aspect-ratio:4/5}
 .cs-split-text p,.cs-part.is-muted p:not(.cs-lead){color:#7E7E7E}
 .cs-split-media{order:-1} /* creatives on the left, text on the right (Nupur 2026-11-15) */
+
+/* observed → applied table (Design decisions): two even columns, hairline rows, labels like the meta row */
+.cs-table{width:100%;border-collapse:collapse;margin:28px 0;font-size:16px;line-height:1.5}
+.cs-table th{text-align:left;font-size:13px;color:#7E7E7E;padding:0 16px 12px 0;border-bottom:1px solid var(--fig-line);width:50%}
+.cs-table td{padding:16px 16px 16px 0;border-bottom:1px solid var(--fig-line);vertical-align:top}
+.cs-table td:last-child{color:#7E7E7E}
 
 /* before/after diagram (Opportunity): two rows of step cards joined by arrows. Before = grey, dashed links (manual,
    team-driven); After = blue outline and solid blue links (creator-driven). Text stays --fig-text for AA contrast. */
